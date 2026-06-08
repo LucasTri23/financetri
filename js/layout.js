@@ -11,7 +11,7 @@ const SECOES = [
     rotulo: 'Lançamentos',
     links: [
       { chave: 'importar', rotulo: '📄 Importar fatura', href: 'importar.html' },
-      { chave: 'nova-saida', rotulo: '↘ Nova saída', href: 'nova-saida.html' },
+      { chave: 'saidas', rotulo: '↘ Saídas', href: 'nova-saida.html' },
       { chave: 'nova-entrada', rotulo: '↗ Nova entrada', href: 'nova-entrada.html' },
     ],
   },

@@ -601,6 +601,10 @@ table.transacoes select {
   font-style: italic;
 }
 
+.estado-vazio.erro {
+  color: var(--vermelho-texto);
+}
+
 .status-formulario {
   min-height: 1.2em;
   font-size: 0.88rem;

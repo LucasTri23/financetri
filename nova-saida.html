@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nova saída — Controle Financeiro</title>
+  <title>Saídas — Controle Financeiro</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -13,12 +13,33 @@
     <main class="conteudo">
       <div class="cabecalho-pagina">
         <div>
-          <h1>Nova saída</h1>
-          <p>Registre um gasto, pagamento ou compra parcelada.</p>
+          <h1>Saídas</h1>
+          <p>Veja os gastos deste mês e registre novos.</p>
         </div>
       </div>
 
+      <section class="cartao">
+        <h2>Gastos deste mês</h2>
+        <p id="estadoSaidas" class="estado-vazio">Carregando…</p>
+        <div style="overflow-x:auto">
+          <table class="transacoes" id="tabelaSaidas" hidden>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Parcela</th>
+                <th>Pago por</th>
+                <th>Valor (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="corpoTabelaSaidas"></tbody>
+          </table>
+        </div>
+      </section>
+
       <section class="cartao estreito">
+        <h2>Nova saída</h2>
         <form id="formSaida" class="form-auth">
           <div class="campo">
             <label for="descricao">Descrição</label>
