@@ -7,26 +7,71 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <header class="topo">
-    <h1>Controle Financeiro</h1>
-    <nav>
-      <a href="dashboard.html">Painel</a>
-      <a href="importar.html">Importar fatura</a>
-      <a href="#" id="linkSair">Sair</a>
-    </nav>
-  </header>
+  <div class="layout">
+    <aside class="barra-lateral" id="barraLateral"></aside>
 
-  <main>
-    <section class="cartao">
-      <h2>Bem-vindo(a), <span id="nomeUsuario">…</span></h2>
-      <p>
-        Esse é o seu painel. Por enquanto, o ponto de partida é a
-        <a href="importar.html">importação de faturas em PDF</a> — o cadastro
-        manual de dívidas, saídas e entradas, além dos totais consolidados,
-        chega nas próximas etapas.
-      </p>
-    </section>
-  </main>
+    <main class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Visão geral</h1>
+          <p>Seu painel financeiro num relance.</p>
+        </div>
+      </div>
+
+      <section class="grade-indicadores">
+        <div class="cartao-credito">
+          <div class="topo-cartao">
+            <span>Saldo do mês</span>
+            <span>💳</span>
+          </div>
+          <div class="numero" id="valorSaldo">R$ —</div>
+          <div class="rodape-cartao">
+            <span>Entradas − saídas − parcelas</span>
+            <span id="periodoAtual"></span>
+          </div>
+        </div>
+
+        <div class="indicador">
+          <div class="rotulo"><span class="ic">↗</span> Total de entradas</div>
+          <div class="valor" id="valorEntradas">R$ —</div>
+          <div class="tendencia positiva">Cadastradas neste mês</div>
+        </div>
+
+        <div class="indicador">
+          <div class="rotulo"><span class="ic">↘</span> Total de saídas e parcelas</div>
+          <div class="valor" id="valorSaidas">R$ —</div>
+          <div class="tendencia negativa">A pagar neste mês</div>
+        </div>
+      </section>
+
+      <section class="cartao">
+        <h2>Próximas parcelas e saídas</h2>
+        <p id="estadoTransacoes" class="estado-vazio">Carregando…</p>
+        <div style="overflow-x:auto">
+          <table class="transacoes" id="tabelaResumo" hidden>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Parcela</th>
+                <th>Valor (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="corpoTabelaResumo"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="cartao">
+        <h2>Comece por aqui</h2>
+        <p>
+          O ponto de partida é a <a href="importar.html">importação de faturas em PDF</a> —
+          ela já cadastra as dívidas parceladas e saídas automaticamente. O cadastro manual
+          de dívidas, saídas e entradas chega nas próximas etapas.
+        </p>
+      </section>
+    </main>
+  </div>
 
   <script type="module" src="js/dashboard.js"></script>
 </body>

@@ -1,22 +1,20 @@
 import {
   auth,
   aguardarUsuario,
-  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   entrarComGoogle,
 } from './firebase.js';
 
-const formLogin = document.getElementById('formLogin');
+const formCadastro = document.getElementById('formCadastro');
 const campoEmail = document.getElementById('email');
 const campoSenha = document.getElementById('senha');
-const botaoEntrar = document.getElementById('botaoEntrar');
+const campoConfirmarSenha = document.getElementById('confirmarSenha');
+const botaoCriarConta = document.getElementById('botaoCriarConta');
 const botaoGoogle = document.getElementById('botaoGoogle');
-const statusLogin = document.getElementById('statusLogin');
+const statusCadastro = document.getElementById('statusCadastro');
 
 const MENSAGENS_ERRO = {
   'auth/invalid-email': 'E-mail inválido.',
-  'auth/user-not-found': 'Usuário não encontrado.',
-  'auth/wrong-password': 'Senha incorreta.',
-  'auth/invalid-credential': 'E-mail ou senha incorretos.',
   'auth/email-already-in-use': 'Já existe uma conta com esse e-mail.',
   'auth/weak-password': 'A senha precisa ter pelo menos 6 caracteres.',
   'auth/popup-closed-by-user': 'A janela de login do Google foi fechada antes de concluir.',
@@ -35,28 +33,34 @@ aguardarUsuario().then((usuario) => {
   if (usuario) irParaPainel();
 });
 
-formLogin.addEventListener('submit', async (evento) => {
+formCadastro.addEventListener('submit', async (evento) => {
   evento.preventDefault();
-  statusLogin.textContent = 'Entrando…';
-  botaoEntrar.disabled = true;
+
+  if (campoSenha.value !== campoConfirmarSenha.value) {
+    statusCadastro.textContent = 'As senhas não conferem. Confira e tente novamente.';
+    return;
+  }
+
+  statusCadastro.textContent = 'Criando conta…';
+  botaoCriarConta.disabled = true;
   try {
-    await signInWithEmailAndPassword(auth, campoEmail.value, campoSenha.value);
+    await createUserWithEmailAndPassword(auth, campoEmail.value, campoSenha.value);
     await irParaPainel();
   } catch (erro) {
-    statusLogin.textContent = mensagemDeErro(erro);
+    statusCadastro.textContent = mensagemDeErro(erro);
   } finally {
-    botaoEntrar.disabled = false;
+    botaoCriarConta.disabled = false;
   }
 });
 
 botaoGoogle.addEventListener('click', async () => {
-  statusLogin.textContent = 'Abrindo login do Google…';
+  statusCadastro.textContent = 'Abrindo login do Google…';
   botaoGoogle.disabled = true;
   try {
     await entrarComGoogle();
     await irParaPainel();
   } catch (erro) {
-    statusLogin.textContent = mensagemDeErro(erro);
+    statusCadastro.textContent = mensagemDeErro(erro);
   } finally {
     botaoGoogle.disabled = false;
   }

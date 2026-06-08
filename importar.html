@@ -7,54 +7,57 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <header class="topo">
-    <h1>Controle Financeiro</h1>
-    <nav>
-      <a href="dashboard.html">Painel</a>
-      <a href="importar.html">Importar fatura</a>
-    </nav>
-  </header>
+  <div class="layout">
+    <aside class="barra-lateral" id="barraLateral"></aside>
 
-  <main>
-    <section class="cartao">
-      <h2>Importar fatura em PDF</h2>
-      <p>
-        Envie o PDF da fatura do cartão de crédito. As transações serão lidas
-        automaticamente — incluindo compras parceladas (ex.: <em>Parcela 3/12</em>) —
-        para você revisar e confirmar antes de salvar.
-      </p>
-      <input type="file" id="arquivoFatura" accept="application/pdf" />
-      <p id="statusImportacao" class="estado-vazio">Nenhum arquivo carregado ainda.</p>
-    </section>
+    <main class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Importar fatura</h1>
+          <p>Envie o PDF da fatura e deixe o app reconhecer as transações.</p>
+        </div>
+      </div>
 
-    <section class="cartao" id="cartaoRevisao" hidden>
-      <h2>Revisar transações detectadas</h2>
-      <p class="aviso">
-        A leitura automática pode errar descrições, datas ou parcelas — confira e
-        corrija o que precisar antes de salvar. Desmarque as linhas que não devem
-        virar dívidas/saídas (ex.: pagamentos da própria fatura).
-      </p>
-      <div style="overflow-x:auto">
-        <table class="transacoes" id="tabelaTransacoes">
-          <thead>
-            <tr>
-              <th style="width:32px"></th>
-              <th>Data</th>
-              <th>Descrição</th>
-              <th>Parcela</th>
-              <th>Valor (R$)</th>
-              <th>Tipo</th>
-            </tr>
-          </thead>
-          <tbody id="corpoTabelaTransacoes"></tbody>
-        </table>
-      </div>
-      <div class="barra-acoes">
-        <button class="botao" id="botaoSalvar">Salvar selecionadas</button>
-        <span id="statusSalvar"></span>
-      </div>
-    </section>
-  </main>
+      <section class="cartao">
+        <h2>Importar fatura em PDF</h2>
+        <p>
+          Envie o PDF da fatura do cartão de crédito. As transações serão lidas
+          automaticamente — incluindo compras parceladas (ex.: <em>Parcela 3/12</em>) —
+          para você revisar e confirmar antes de salvar.
+        </p>
+        <input type="file" id="arquivoFatura" accept="application/pdf" />
+        <p id="statusImportacao" class="estado-vazio">Nenhum arquivo carregado ainda.</p>
+      </section>
+
+      <section class="cartao" id="cartaoRevisao" hidden>
+        <h2>Revisar transações detectadas</h2>
+        <p class="aviso">
+          A leitura automática pode errar descrições, datas ou parcelas — confira e
+          corrija o que precisar antes de salvar. Desmarque as linhas que não devem
+          virar dívidas/saídas (ex.: pagamentos da própria fatura).
+        </p>
+        <div style="overflow-x:auto">
+          <table class="transacoes" id="tabelaTransacoes">
+            <thead>
+              <tr>
+                <th style="width:32px"></th>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Parcela</th>
+                <th>Valor (R$)</th>
+                <th>Tipo</th>
+              </tr>
+            </thead>
+            <tbody id="corpoTabelaTransacoes"></tbody>
+          </table>
+        </div>
+        <div class="barra-acoes">
+          <button class="botao" id="botaoSalvar">Salvar selecionadas</button>
+          <span id="statusSalvar"></span>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script type="module" src="js/importar.js"></script>
 </body>

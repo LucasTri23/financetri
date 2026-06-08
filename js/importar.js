@@ -1,6 +1,17 @@
 import { parseFaturaPdf } from './pdfParser.js';
-// Importado sob demanda (só quando o usuário clica em "Salvar"): assim, se o
-// Firebase falhar ao carregar, a leitura/revisão do PDF continua funcionando.
+import { exigirLogin } from './firebase.js';
+import { montarBarraLateral } from './layout.js';
+// salvarTransacoesImportadas é importado sob demanda (só quando o usuário
+// clica em "Salvar"): assim, se o Firebase falhar ao carregar, a
+// leitura/revisão do PDF continua funcionando.
+
+const usuario = await exigirLogin();
+if (usuario) {
+  montarBarraLateral('importar', usuario);
+  iniciarImportacao();
+}
+
+function iniciarImportacao() {
 
 const inputArquivo = document.getElementById('arquivoFatura');
 const statusImportacao = document.getElementById('statusImportacao');
@@ -196,3 +207,5 @@ botaoSalvar.addEventListener('click', async () => {
     botaoSalvar.disabled = false;
   }
 });
+
+}

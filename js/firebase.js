@@ -7,6 +7,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
@@ -21,7 +23,15 @@ export {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  signInWithPopup,
 };
+
+export const googleProvider = new GoogleAuthProvider();
+
+// Realiza o login com a conta Google do usuário (popup do Firebase Auth).
+export function entrarComGoogle() {
+  return signInWithPopup(auth, googleProvider);
+}
 
 // Resolve assim que soubermos se há (ou não) um usuário autenticado.
 // Útil para páginas que precisam aguardar o estado de auth antes de agir.

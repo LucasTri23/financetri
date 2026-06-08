@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entrar — Controle Financeiro</title>
+  <title>Criar conta — Controle Financeiro</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <main class="pagina-auth">
     <section class="cartao">
-      <h2>Controle Financeiro</h2>
-      <p>Entre com seu e-mail e senha para acessar seu painel.</p>
+      <h2>Criar conta</h2>
+      <p>Preencha os dados abaixo para começar a usar o Controle Financeiro.</p>
 
-      <form id="formLogin" class="form-auth">
+      <form id="formCadastro" class="form-auth">
         <div class="campo">
           <label for="email">E-mail</label>
           <input type="email" id="email" required />
@@ -21,12 +21,16 @@
           <label for="senha">Senha</label>
           <input type="password" id="senha" required minlength="6" />
         </div>
+        <div class="campo">
+          <label for="confirmarSenha">Confirmar senha</label>
+          <input type="password" id="confirmarSenha" required minlength="6" />
+        </div>
         <div class="barra-acoes">
-          <button type="submit" class="botao" id="botaoEntrar">Entrar</button>
+          <button type="submit" class="botao" id="botaoCriarConta">Criar conta</button>
         </div>
       </form>
 
-      <p class="status-auth" id="statusLogin"></p>
+      <p class="status-auth" id="statusCadastro"></p>
 
       <div class="separador">ou</div>
 
@@ -35,11 +39,11 @@
       </button>
 
       <p class="rodape-auth">
-        Ainda não tem conta? <a href="cadastro.html">Criar conta</a>
+        Já tem conta? <a href="index.html">Entrar</a>
       </p>
     </section>
   </main>
 
-  <script type="module" src="js/login.js"></script>
+  <script type="module" src="js/cadastro.js"></script>
 </body>
 </html>

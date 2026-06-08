@@ -1,18 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --roxo: #8a05be;
-  --roxo-escuro: #5b0a85;
-  --roxo-claro: #f4e9fb;
-  --roxo-suave: #efe3fb;
-  --verde: #1f9254;
+  --verde-escuro: #0f3d3a;
+  --verde: #0d9488;
+  --verde-claro: #2dd4bf;
+  --verde-suave: #e6f5f3;
+  --verde-texto: #0d6d61;
   --vermelho: #d23f3f;
-  --cinza: #6b6b76;
-  --cinza-claro: #9a98a3;
-  --borda: #e7e4ee;
-  --fundo: #f6f4fa;
-  --texto: #221c2e;
-  --sombra: 0 8px 24px -12px rgba(72, 11, 110, 0.25);
+  --vermelho-suave: #fdeaea;
+  --cinza: #6b7280;
+  --cinza-claro: #9aa0a6;
+  --borda: #e7ebea;
+  --fundo: #f3f6f5;
+  --texto: #16201e;
+  --sombra: 0 10px 28px -14px rgba(15, 61, 58, 0.28);
 }
 
 * {
@@ -27,51 +28,11 @@ body {
   line-height: 1.5;
 }
 
-header.topo {
-  background: linear-gradient(120deg, var(--roxo) 0%, var(--roxo-escuro) 100%);
-  color: #fff;
-  padding: 18px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 4px 20px -6px rgba(72, 11, 110, 0.45);
+a {
+  color: var(--verde-texto);
 }
 
-header.topo h1 {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-header.topo nav {
-  display: flex;
-  gap: 6px;
-}
-
-header.topo nav a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.92rem;
-  font-weight: 500;
-  padding: 8px 14px;
-  border-radius: 8px;
-  opacity: 0.88;
-  transition: background 0.15s ease, opacity 0.15s ease;
-}
-
-header.topo nav a:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.16);
-}
-
-main {
-  max-width: 980px;
-  margin: 32px auto;
-  padding: 0 20px;
-}
-
-h2 {
+h1, h2, h3 {
   font-weight: 700;
   letter-spacing: -0.01em;
   margin-top: 0;
@@ -81,18 +42,295 @@ p {
   color: var(--cinza);
 }
 
+/* ---------- Layout com barra lateral ---------- */
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.barra-lateral {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--verde-escuro);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 18px;
+}
+
+.barra-lateral .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  padding: 0 8px 28px;
+}
+
+.barra-lateral .logo .marca {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--verde-claro), var(--verde));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--verde-escuro);
+}
+
+.barra-lateral nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.barra-lateral nav a {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 11px 14px;
+  border-radius: 10px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.barra-lateral nav a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.barra-lateral nav a.ativo {
+  background: var(--verde);
+  color: #fff;
+}
+
+.barra-lateral .rodape-lateral {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.barra-lateral .rodape-lateral .usuario {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0 14px 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barra-lateral .rodape-lateral a {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+.barra-lateral .rodape-lateral a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.conteudo {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 36px;
+}
+
+.conteudo > .cabecalho-pagina {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.cabecalho-pagina p {
+  margin: 4px 0 0;
+}
+
+/* ---------- Cards genéricos ---------- */
+
 .cartao {
   background: #fff;
   border: 1px solid var(--borda);
-  border-radius: 14px;
-  padding: 26px 28px;
+  border-radius: 16px;
+  padding: 24px 26px;
   margin-bottom: 22px;
   box-shadow: var(--sombra);
 }
 
 .cartao h2 {
   color: var(--texto);
+  font-size: 1.15rem;
 }
+
+/* ---------- Grid de indicadores (estilo "Overview") ---------- */
+
+.grade-indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.indicador {
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: var(--sombra);
+}
+
+.indicador .rotulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--cinza);
+  font-weight: 500;
+}
+
+.indicador .rotulo .ic {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--verde-suave);
+  color: var(--verde-texto);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.indicador .valor {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 12px 0 6px;
+}
+
+.indicador .tendencia {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.indicador .tendencia.positiva {
+  color: var(--verde-texto);
+}
+
+.indicador .tendencia.negativa {
+  color: var(--vermelho);
+}
+
+.indicador .tendencia .ref {
+  color: var(--cinza-claro);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+/* ---------- Cartão de "saldo" estilo cartão de crédito ---------- */
+
+.cartao-credito {
+  border-radius: 16px;
+  padding: 22px 24px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--verde-claro) 0%, var(--verde-escuro) 120%);
+  box-shadow: var(--sombra);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 168px;
+}
+
+.cartao-credito .topo-cartao {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.cartao-credito .numero {
+  font-size: 1.25rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  margin: 18px 0 6px;
+}
+
+.cartao-credito .rodape-cartao {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+/* ---------- Botões ---------- */
+
+.botao {
+  background: linear-gradient(120deg, var(--verde) 0%, var(--verde-escuro) 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 22px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 18px -8px rgba(15, 61, 58, 0.55);
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.botao:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px -8px rgba(15, 61, 58, 0.6);
+}
+
+.botao.secundario {
+  background: #fff;
+  color: var(--verde-texto);
+  border: 1.5px solid var(--verde);
+  box-shadow: none;
+}
+
+.botao.secundario:hover {
+  background: var(--verde-suave);
+  transform: none;
+  box-shadow: none;
+}
+
+.botao.google {
+  background: #fff;
+  color: var(--texto);
+  border: 1.5px solid var(--borda);
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.botao.google:hover {
+  background: #f7f9f8;
+  transform: none;
+  box-shadow: none;
+}
+
+.botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---------- Formulários ---------- */
 
 input[type="text"],
 input[type="email"],
@@ -104,8 +342,8 @@ select {
   font-size: 0.95rem;
   color: var(--texto);
   border: 1px solid var(--borda);
-  border-radius: 8px;
-  padding: 9px 12px;
+  border-radius: 9px;
+  padding: 10px 13px;
   background: #fff;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -113,17 +351,17 @@ select {
 input:focus,
 select:focus {
   outline: none;
-  border-color: var(--roxo);
-  box-shadow: 0 0 0 3px var(--roxo-suave);
+  border-color: var(--verde);
+  box-shadow: 0 0 0 3px var(--verde-suave);
 }
 
 input[type="file"] {
   font-family: inherit;
   font-size: 0.92rem;
-  padding: 8px;
+  padding: 9px;
   border: 1px dashed var(--cinza-claro);
   border-radius: 10px;
-  background: var(--roxo-claro);
+  background: var(--verde-suave);
   width: 100%;
 }
 
@@ -133,43 +371,7 @@ label {
   color: var(--texto);
 }
 
-.botao {
-  background: linear-gradient(120deg, var(--roxo) 0%, var(--roxo-escuro) 100%);
-  color: #fff;
-  border: none;
-  border-radius: 9px;
-  padding: 11px 22px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 6px 16px -6px rgba(90, 10, 130, 0.55);
-  transition: transform 0.1s ease, box-shadow 0.15s ease;
-}
-
-.botao:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px -6px rgba(90, 10, 130, 0.6);
-}
-
-.botao.secundario {
-  background: #fff;
-  color: var(--roxo);
-  border: 1.5px solid var(--roxo);
-  box-shadow: none;
-}
-
-.botao.secundario:hover {
-  background: var(--roxo-claro);
-  transform: none;
-  box-shadow: none;
-}
-
-.botao:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
+/* ---------- Tabela de transações ---------- */
 
 table.transacoes {
   width: 100%;
@@ -186,10 +388,10 @@ table.transacoes td {
 }
 
 table.transacoes th {
-  background: var(--roxo-claro);
-  color: var(--roxo-escuro);
+  background: var(--verde-suave);
+  color: var(--verde-texto);
   font-weight: 600;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -203,7 +405,7 @@ table.transacoes th:last-child {
 }
 
 table.transacoes tbody tr:hover {
-  background: #fbf8fd;
+  background: #fafdfc;
 }
 
 table.transacoes input,
@@ -215,7 +417,7 @@ table.transacoes select {
 }
 
 .valor-negativo {
-  color: var(--verde);
+  color: var(--verde-texto);
   font-weight: 600;
 }
 
@@ -250,29 +452,50 @@ table.transacoes select {
   font-style: italic;
 }
 
-a {
-  color: var(--roxo);
-}
+/* ---------- Páginas de autenticação ---------- */
 
-.pagina-login {
-  max-width: 400px;
-  margin: 90px auto;
+.pagina-auth {
+  max-width: 420px;
+  margin: 64px auto;
   padding: 0 20px;
 }
 
-.form-login .campo {
+.form-auth .campo {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 16px;
 }
 
-.form-login .campo input {
+.form-auth .campo input {
   width: 100%;
 }
 
-.status-login {
+.status-auth {
   min-height: 1.2em;
   color: var(--vermelho);
   font-size: 0.88rem;
+}
+
+.separador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--cinza-claro);
+  font-size: 0.82rem;
+  margin: 18px 0;
+}
+
+.separador::before,
+.separador::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--borda);
+}
+
+.rodape-auth {
+  margin-top: 18px;
+  font-size: 0.9rem;
+  text-align: center;
 }
