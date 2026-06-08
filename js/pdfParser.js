@@ -135,13 +135,9 @@ function extrairContexto(todasAsLinhasDeTexto) {
   return { anoFatura, mesFechamentoProxima };
 }
 
-// Recebe um ArrayBuffer com o conteúdo do PDF e devolve a lista de transações
-// detectadas. Requer que `pdfjsLib` esteja disponível globalmente (carregado via CDN).
-export async function parseFaturaPdf(arrayBuffer) {
-  if (typeof pdfjsLib === 'undefined') {
-    throw new Error('pdf.js não foi carregado (pdfjsLib indisponível).');
-  }
-
+// Recebe a biblioteca pdf.js já carregada (módulo ES) e um ArrayBuffer com o
+// conteúdo do PDF, e devolve a lista de transações detectadas.
+export async function parseFaturaPdf(pdfjsLib, arrayBuffer) {
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
   const linhasPorPagina = [];

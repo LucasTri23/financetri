@@ -1,8 +1,6 @@
 import { parseFaturaPdf } from './pdfParser.js';
-import { salvarTransacoesImportadas } from './firestore.js';
-
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.js';
+// Importado sob demanda (só quando o usuário clica em "Salvar"): assim, se o
+// Firebase falhar ao carregar, a leitura/revisão do PDF continua funcionando.
 
 const inputArquivo = document.getElementById('arquivoFatura');
 const statusImportacao = document.getElementById('statusImportacao');
@@ -10,6 +8,22 @@ const cartaoRevisao = document.getElementById('cartaoRevisao');
 const corpoTabela = document.getElementById('corpoTabelaTransacoes');
 const botaoSalvar = document.getElementById('botaoSalvar');
 const statusSalvar = document.getElementById('statusSalvar');
+
+const PDF_JS_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs';
+const PDF_WORKER_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
+
+// pdf.js é carregado sob demanda como módulo ES (evita depender de um global
+// vindo de <script>, e funciona com o build .mjs distribuído pelo pacote).
+let pdfjsLibPromise = null;
+function carregarPdfJs() {
+  if (!pdfjsLibPromise) {
+    pdfjsLibPromise = import(PDF_JS_URL).then((modulo) => {
+      modulo.GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
+      return modulo;
+    });
+  }
+  return pdfjsLibPromise;
+}
 
 let transacoesAtuais = [];
 
@@ -137,12 +151,12 @@ inputArquivo.addEventListener('change', async () => {
   const arquivo = inputArquivo.files[0];
   if (!arquivo) return;
 
-  statusImportacao.textContent = 'Lendo o PDF e identificando transações…';
+  statusImportacao.textContent = 'Carregando leitor de PDF e identificando transações…';
   statusImportacao.classList.remove('estado-vazio');
 
   try {
-    const buffer = await arquivo.arrayBuffer();
-    const { transacoes, anoFaturaDetectado } = await parseFaturaPdf(buffer);
+    const [pdfjsLib, buffer] = await Promise.all([carregarPdfJs(), arquivo.arrayBuffer()]);
+    const { transacoes, anoFaturaDetectado } = await parseFaturaPdf(pdfjsLib, buffer);
 
     if (transacoes.length === 0) {
       statusImportacao.textContent =
@@ -172,6 +186,7 @@ botaoSalvar.addEventListener('click', async () => {
   botaoSalvar.disabled = true;
   statusSalvar.textContent = 'Salvando…';
   try {
+    const { salvarTransacoesImportadas } = await import('./firestore.js');
     await salvarTransacoesImportadas(selecionadas);
     statusSalvar.textContent = `${selecionadas.length} transação(ões) salva(s) com sucesso.`;
   } catch (erro) {
