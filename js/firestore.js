@@ -25,6 +25,7 @@ async function salvarDivida(uid, transacao) {
 
   await addDoc(collection(db, 'usuarios', uid, 'dividas'), {
     descricao: transacao.descricao,
+    categoria: transacao.categoria || 'outros',
     valorParcela: Math.abs(transacao.valor),
     parcelaAtual: transacao.parcelaAtual,
     totalParcelas: transacao.totalParcelas,
@@ -39,6 +40,7 @@ async function salvarDivida(uid, transacao) {
 async function salvarSaida(uid, transacao) {
   await addDoc(collection(db, 'usuarios', uid, 'saidas'), {
     descricao: transacao.descricao,
+    categoria: transacao.categoria || 'outros',
     valor: Math.abs(transacao.valor),
     data: transacao.dataTexto,
     metodo: 'cartao_credito',

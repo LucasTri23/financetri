@@ -1,6 +1,7 @@
 import { parseFaturaPdf } from './pdfParser.js';
 import { exigirLogin } from './firebase.js';
 import { montarBarraLateral } from './layout.js';
+import { CATEGORIAS, sugerirCategoria } from './categorias.js';
 // salvarTransacoesImportadas é importado sob demanda (só quando o usuário
 // clica em "Salvar"): assim, se o Firebase falhar ao carregar, a
 // leitura/revisão do PDF continua funcionando.
@@ -138,7 +139,22 @@ function criarLinhaTabela(transacao, indice) {
   }
   tdTipo.appendChild(selectTipo);
 
-  tr.append(tdSelecionar, tdData, tdDescricao, tdParcela, tdValor, tdTipo);
+  const tdCategoria = document.createElement('td');
+  const selectCategoria = document.createElement('select');
+  for (const { chave, rotulo } of CATEGORIAS) {
+    const opt = document.createElement('option');
+    opt.value = chave;
+    opt.textContent = rotulo;
+    selectCategoria.appendChild(opt);
+  }
+  transacao.categoria = transacao.categoria || sugerirCategoria(transacao.descricao);
+  selectCategoria.value = transacao.categoria;
+  selectCategoria.addEventListener('change', () => {
+    transacao.categoria = selectCategoria.value;
+  });
+  tdCategoria.appendChild(selectCategoria);
+
+  tr.append(tdSelecionar, tdData, tdDescricao, tdParcela, tdValor, tdTipo, tdCategoria);
   tr.querySelector('input[type="checkbox"]').dataset.papel = 'selecionar';
   return tr;
 }
