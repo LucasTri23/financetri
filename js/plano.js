@@ -7,6 +7,7 @@ import {
   doc,
   query,
   where,
+  getDoc,
   getDocs,
   setDoc,
   updateDoc,
@@ -34,10 +35,21 @@ export async function buscarPlanoDoUsuario(usuario) {
   return { id: documento.id, ...documento.data() };
 }
 
-// Cria um novo plano compartilhado tendo o usuário atual como dono/membro inicial.
+// Cria um novo plano compartilhado tendo o usuário atual como dono/membro
+// inicial, e registra o código de convite na coleção "convites" (id = código)
+// — assim, quem for entrar com o código não precisa de permissão para
+// consultar (query) a coleção "planos" inteira, só buscar esse id exato.
 export async function criarPlano(usuario, nome) {
-  const codigoConvite = gerarCodigoConvite();
   const referencia = doc(collection(db, 'planos'));
+
+  let codigoConvite;
+  let referenciaConvite;
+  for (let tentativa = 0; tentativa < 5; tentativa++) {
+    codigoConvite = gerarCodigoConvite();
+    referenciaConvite = doc(db, 'convites', codigoConvite);
+    if (!(await getDoc(referenciaConvite)).exists()) break;
+  }
+
   await setDoc(referencia, {
     nome: nome || `Plano de ${usuario.email}`,
     donoId: usuario.uid,
@@ -46,29 +58,34 @@ export async function criarPlano(usuario, nome) {
     codigoConvite,
     criadoEm: serverTimestamp(),
   });
+  await setDoc(referenciaConvite, { planoId: referencia.id, donoId: usuario.uid });
+
   return { id: referencia.id, codigoConvite };
 }
 
 // Usa um código de convite para entrar em um plano existente.
 export async function entrarComCodigo(usuario, codigoDigitado) {
   const codigo = codigoDigitado.trim().toUpperCase();
-  const consulta = query(collection(db, 'planos'), where('codigoConvite', '==', codigo));
-  const instantaneo = await getDocs(consulta);
-  if (instantaneo.empty) {
+  const conviteSnapshot = await getDoc(doc(db, 'convites', codigo));
+  if (!conviteSnapshot.exists()) {
     throw new Error('Código de convite inválido. Confira com quem te convidou.');
   }
 
-  const documento = instantaneo.docs[0];
-  const dados = documento.data();
-  if ((dados.membros || []).includes(usuario.uid)) {
-    return { id: documento.id, jaEraMembro: true };
-  }
+  const { planoId } = conviteSnapshot.data();
+  const referenciaPlano = doc(db, 'planos', planoId);
 
-  await updateDoc(doc(db, 'planos', documento.id), {
-    membros: arrayUnion(usuario.uid),
-    [`membrosInfo.${usuario.uid}`]: { email: usuario.email },
-  });
-  return { id: documento.id, jaEraMembro: false };
+  // Não dá pra ler o plano antes de entrar (as regras só permitem leitura para
+  // quem já é integrante). arrayUnion é idempotente, então só atualizamos —
+  // a tela de plano já evita mostrar este formulário para quem já tem um plano.
+  try {
+    await updateDoc(referenciaPlano, {
+      membros: arrayUnion(usuario.uid),
+      [`membrosInfo.${usuario.uid}`]: { email: usuario.email },
+    });
+  } catch (erro) {
+    throw new Error('Este convite não é mais válido.');
+  }
+  return { id: planoId, jaEraMembro: false };
 }
 
 // Preenche um <select> de "quem paga"/"quem recebe" com o usuário atual e,

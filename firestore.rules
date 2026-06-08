@@ -7,6 +7,12 @@ rules_version = '2';
 // - Planos compartilhados (planos/{planoId}) só podem ser lidos/alterados por
 //   quem já é integrante; uma pessoa de fora pode entrar usando o código de
 //   convite, desde que apenas adicione a si mesma à lista de membros.
+// - Como o Firestore não permite consultas (queries) em coleções que o
+//   solicitante não pode ler por inteiro, o código de convite não é buscado
+//   com uma query em "planos" — em vez disso existe uma coleção auxiliar
+//   "convites/{codigo}" (id = código), que mapeia o código para o id do
+//   plano. Qualquer pessoa autenticada pode buscar um convite pelo código
+//   exato (leitura direta por id, não uma lista), expondo só o id do plano.
 service cloud.firestore {
   match /databases/{database}/documents {
     match /usuarios/{uid}/{documento=**} {
@@ -34,6 +40,18 @@ service cloud.firestore {
       );
 
       allow delete: if request.auth != null && request.auth.uid == resource.data.donoId;
+    }
+
+    match /convites/{codigo} {
+      // Buscar um convite exige saber o código exato (id do documento) —
+      // não é uma lista, então não há risco de enumerar todos os planos.
+      allow get: if request.auth != null;
+
+      allow create: if request.auth != null
+        && request.resource.data.donoId == request.auth.uid;
+
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.donoId;
     }
   }
 }
