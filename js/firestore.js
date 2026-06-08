@@ -59,6 +59,61 @@ async function salvarEntrada(uid, transacao) {
   });
 }
 
+// Salva uma saída cadastrada manualmente (não vinda de importação de fatura).
+export async function salvarSaidaManual(uid, dados) {
+  await addDoc(collection(db, 'usuarios', uid, 'saidas'), {
+    descricao: dados.descricao,
+    categoria: dados.categoria || 'outros',
+    valor: dados.valor,
+    data: dados.data,
+    metodo: dados.metodo,
+    recorrente: dados.recorrente,
+    frequencia: dados.frequencia || null,
+    pagadorUid: dados.pagadorUid,
+    pagadorEmail: dados.pagadorEmail,
+    origem: 'manual',
+    criadoEm: serverTimestamp(),
+  });
+}
+
+// Salva uma compra parcelada cadastrada manualmente como uma dívida — a
+// primeira parcela é a que está sendo registrada agora.
+export async function salvarDividaManual(uid, dados) {
+  const { proximo, parcelasRestantes } = calcularProximoVencimento(dados.data, 1, dados.totalParcelas);
+
+  await addDoc(collection(db, 'usuarios', uid, 'dividas'), {
+    descricao: dados.descricao,
+    categoria: dados.categoria || 'outros',
+    valorParcela: dados.valor,
+    parcelaAtual: 1,
+    totalParcelas: dados.totalParcelas,
+    parcelasRestantes,
+    dataCompra: dados.data,
+    proximoVencimento: proximo,
+    metodo: dados.metodo,
+    pagadorUid: dados.pagadorUid,
+    pagadorEmail: dados.pagadorEmail,
+    origem: 'manual',
+    criadoEm: serverTimestamp(),
+  });
+}
+
+// Salva uma entrada (receita) cadastrada manualmente.
+export async function salvarEntradaManual(uid, dados) {
+  await addDoc(collection(db, 'usuarios', uid, 'entradas'), {
+    descricao: dados.descricao,
+    tipo: dados.tipo,
+    valor: dados.valor,
+    data: dados.data,
+    recorrente: dados.recorrente,
+    frequencia: dados.frequencia || null,
+    recebedorUid: dados.recebedorUid,
+    recebedorEmail: dados.recebedorEmail,
+    origem: 'manual',
+    criadoEm: serverTimestamp(),
+  });
+}
+
 // Persiste as transações revisadas pelo usuário, encaminhando cada uma para a
 // coleção correta conforme o tipo escolhido na tela de revisão.
 export async function salvarTransacoesImportadas(transacoes) {

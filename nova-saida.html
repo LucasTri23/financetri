@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova saída — Controle Financeiro</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="barra-lateral" id="barraLateral"></aside>
+
+    <main class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Nova saída</h1>
+          <p>Registre um gasto, pagamento ou compra parcelada.</p>
+        </div>
+      </div>
+
+      <section class="cartao estreito">
+        <form id="formSaida" class="form-auth">
+          <div class="campo">
+            <label for="descricao">Descrição</label>
+            <input type="text" id="descricao" placeholder="Ex.: Supermercado, aluguel, Netflix..." required />
+          </div>
+
+          <div class="linha-campos">
+            <div class="campo">
+              <label for="valor">Valor (R$)</label>
+              <input type="number" id="valor" step="0.01" min="0.01" required />
+            </div>
+            <div class="campo">
+              <label for="data">Data</label>
+              <input type="date" id="data" required />
+            </div>
+          </div>
+
+          <div class="linha-campos">
+            <div class="campo">
+              <label for="categoria">Categoria</label>
+              <select id="categoria"></select>
+            </div>
+            <div class="campo">
+              <label for="metodo">Como foi pago</label>
+              <select id="metodo">
+                <option value="pix">Pix</option>
+                <option value="debito">Cartão de débito</option>
+                <option value="credito">Cartão de crédito</option>
+                <option value="dinheiro">Dinheiro</option>
+                <option value="transferencia">Transferência</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="tipoLancamento">Tipo de lançamento</label>
+            <select id="tipoLancamento">
+              <option value="unico">Pagamento único</option>
+              <option value="parcelado">Parcelado</option>
+              <option value="recorrente">Recorrente (todo mês, toda semana...)</option>
+            </select>
+          </div>
+
+          <div class="campo-condicional" id="blocoParcelas" hidden>
+            <div class="campo">
+              <label for="totalParcelas">Em quantas vezes?</label>
+              <input type="number" id="totalParcelas" min="2" max="48" value="2" />
+            </div>
+          </div>
+
+          <div class="campo-condicional" id="blocoRecorrencia" hidden>
+            <div class="campo">
+              <label for="frequencia">Frequência</label>
+              <select id="frequencia">
+                <option value="mensal">Mensal</option>
+                <option value="semanal">Semanal</option>
+                <option value="anual">Anual</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="pagador">Quem vai pagar?</label>
+            <select id="pagador"></select>
+          </div>
+
+          <div class="barra-acoes">
+            <button type="submit" class="botao saida" id="botaoSalvar">Salvar saída</button>
+            <span class="status-formulario" id="statusSaida"></span>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="js/novaSaida.js"></script>
+</body>
+</html>

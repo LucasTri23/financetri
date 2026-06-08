@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plano compartilhado — Controle Financeiro</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="barra-lateral" id="barraLateral"></aside>
+
+    <main class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Plano compartilhado</h1>
+          <p>Junte-se a alguém para acompanhar entradas e saídas em conjunto.</p>
+        </div>
+      </div>
+
+      <p id="estadoPlano" class="estado-vazio">Carregando…</p>
+
+      <section class="cartao estreito" id="blocoSemPlano" hidden>
+        <h2>Você ainda não tem um plano</h2>
+        <p>Crie um plano compartilhado para convidar outra pessoa, ou entre em um plano existente usando um código de convite.</p>
+
+        <div class="campo">
+          <label for="nomePlano">Nome do plano (opcional)</label>
+          <input type="text" id="nomePlano" placeholder="Ex.: Finanças do casal" />
+        </div>
+        <div class="barra-acoes">
+          <button type="button" class="botao" id="botaoCriarPlano">Criar plano compartilhado</button>
+          <span class="status-formulario" id="statusCriarPlano"></span>
+        </div>
+
+        <div class="separador">ou</div>
+
+        <div class="linha-campos">
+          <div class="campo">
+            <label for="codigoConvite">Código de convite</label>
+            <input type="text" id="codigoConvite" placeholder="Ex.: AB12CD" maxlength="6" style="text-transform: uppercase" />
+          </div>
+        </div>
+        <div class="barra-acoes">
+          <button type="button" class="botao entrada" id="botaoEntrarComCodigo">Entrar com código</button>
+          <span class="status-formulario" id="statusEntrarPlano"></span>
+        </div>
+      </section>
+
+      <section class="cartao" id="blocoComPlano" hidden>
+        <h2 id="nomeDoPlano">Seu plano</h2>
+        <p>Compartilhe o código abaixo com a pessoa que vai entrar no plano com você.</p>
+        <div class="codigo-convite">
+          <span class="codigo" id="codigoConviteAtual"></span>
+          <span>Ela deve colar este código na seção "Plano compartilhado" da própria conta.</span>
+        </div>
+
+        <h2 style="margin-top: 28px">Integrantes</h2>
+        <div class="lista-membros" id="listaMembros"></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="js/plano-pagina.js"></script>
+</body>
+</html>

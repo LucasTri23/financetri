@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova entrada — Controle Financeiro</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="barra-lateral" id="barraLateral"></aside>
+
+    <main class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Nova entrada</h1>
+          <p>Registre um salário ou outra receita.</p>
+        </div>
+      </div>
+
+      <section class="cartao estreito">
+        <form id="formEntrada" class="form-auth">
+          <div class="campo">
+            <label for="descricao">Descrição</label>
+            <input type="text" id="descricao" placeholder="Ex.: Salário, freelance, reembolso..." required />
+          </div>
+
+          <div class="linha-campos">
+            <div class="campo">
+              <label for="valor">Valor (R$)</label>
+              <input type="number" id="valor" step="0.01" min="0.01" required />
+            </div>
+            <div class="campo">
+              <label for="data">Data</label>
+              <input type="date" id="data" required />
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="tipo">Tipo de receita</label>
+            <select id="tipo">
+              <option value="salario">Salário</option>
+              <option value="freelance">Freelance / trabalho extra</option>
+              <option value="investimento">Investimentos / rendimentos</option>
+              <option value="presente">Presente</option>
+              <option value="reembolso">Reembolso</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="tipoLancamento">Frequência</label>
+            <select id="tipoLancamento">
+              <option value="unico">Recebimento único</option>
+              <option value="recorrente">Recorrente (todo mês, toda semana...)</option>
+            </select>
+          </div>
+
+          <div class="campo-condicional" id="blocoRecorrencia" hidden>
+            <div class="campo">
+              <label for="frequencia">A cada quanto tempo?</label>
+              <select id="frequencia">
+                <option value="mensal">Mensal</option>
+                <option value="semanal">Semanal</option>
+                <option value="anual">Anual</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="recebedor">Quem vai receber?</label>
+            <select id="recebedor"></select>
+          </div>
+
+          <div class="barra-acoes">
+            <button type="submit" class="botao entrada" id="botaoSalvar">Salvar entrada</button>
+            <span class="status-formulario" id="statusEntrada"></span>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="js/novaEntrada.js"></script>
+</body>
+</html>
