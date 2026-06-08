@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-azul-escuro: #0c4a6e;
+  --color-azul: #0ea5e9;
+  --color-azul-claro: #7dd3fc;
+  --color-azul-suave: #e0f2fe;
+  --color-azul-texto: #0369a1;
+
+  --color-verde: #16a34a;
+  --color-verde-suave: #dcfce7;
+  --color-verde-texto: #15803d;
+
+  --color-vermelho: #dc2626;
+  --color-vermelho-suave: #fee2e2;
+  --color-vermelho-texto: #b91c1c;
+
+  --color-cinza: #64748b;
+  --color-cinza-claro: #94a3b8;
+  --color-borda: #e2e8f0;
+  --color-fundo: #f3f7fb;
+  --color-texto: #0f1d2b;
+
+  --shadow-cartao: 0 16px 40px -20px rgba(12, 74, 110, 0.32);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-azul-escuro: var(--color-azul-escuro);
+  --color-azul: var(--color-azul);
+  --color-azul-claro: var(--color-azul-claro);
+  --color-azul-suave: var(--color-azul-suave);
+  --color-azul-texto: var(--color-azul-texto);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-verde: var(--color-verde);
+  --color-verde-suave: var(--color-verde-suave);
+  --color-verde-texto: var(--color-verde-texto);
+
+  --color-vermelho: var(--color-vermelho);
+  --color-vermelho-suave: var(--color-vermelho-suave);
+  --color-vermelho-texto: var(--color-vermelho-texto);
+
+  --color-cinza: var(--color-cinza);
+  --color-cinza-claro: var(--color-cinza-claro);
+  --color-borda: var(--color-borda);
+  --color-fundo: var(--color-fundo);
+  --color-texto: var(--color-texto);
+
+  --shadow-cartao: var(--shadow-cartao);
+
+  --font-sans: var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-fundo);
+  color: var(--color-texto);
 }
