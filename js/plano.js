@@ -35,6 +35,19 @@ export async function buscarPlanoDoUsuario(usuario) {
   return { id: documento.id, ...documento.data() };
 }
 
+// Planos criados antes da coleção "convites" existir não têm o documento de
+// busca do código (só o campo "codigoConvite" salvo dentro do próprio plano).
+// Por isso, ao carregar a página, o dono do plano garante que esse documento
+// exista — só ele tem permissão de criá-lo (ver regra de segurança).
+export async function garantirConviteRegistrado(plano) {
+  if (!plano.codigoConvite) return;
+  const referenciaConvite = doc(db, 'convites', plano.codigoConvite);
+  const existente = await getDoc(referenciaConvite);
+  if (!existente.exists()) {
+    await setDoc(referenciaConvite, { planoId: plano.id, donoId: plano.donoId });
+  }
+}
+
 // Cria um novo plano compartilhado tendo o usuário atual como dono/membro
 // inicial, e registra o código de convite na coleção "convites" (id = código)
 // — assim, quem for entrar com o código não precisa de permissão para

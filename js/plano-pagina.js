@@ -2,7 +2,7 @@
 // código, e ver os integrantes do plano atual.
 import { exigirLogin } from './firebase.js';
 import { montarBarraLateral } from './layout.js';
-import { buscarPlanoDoUsuario, criarPlano, entrarComCodigo } from './plano.js';
+import { buscarPlanoDoUsuario, criarPlano, entrarComCodigo, garantirConviteRegistrado } from './plano.js';
 
 const usuario = await exigirLogin();
 if (usuario) {
@@ -47,6 +47,14 @@ async function iniciarPagina(usuario) {
     if (!plano) {
       blocoSemPlano.hidden = false;
       return;
+    }
+
+    if (plano.donoId === usuario.uid) {
+      try {
+        await garantirConviteRegistrado(plano);
+      } catch (erro) {
+        console.error(erro);
+      }
     }
 
     blocoComPlano.hidden = false;
