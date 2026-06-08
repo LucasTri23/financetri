@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrar — Controle Financeiro</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main style="max-width:380px; margin-top:80px;">
+    <section class="cartao">
+      <h2>Controle Financeiro</h2>
+      <p>Entre com seu e-mail e senha para acessar seu painel.</p>
+
+      <form id="formLogin">
+        <p>
+          <label for="email">E-mail</label><br />
+          <input type="email" id="email" required style="width:100%; padding:8px; margin-top:4px;" />
+        </p>
+        <p>
+          <label for="senha">Senha</label><br />
+          <input type="password" id="senha" required minlength="6" style="width:100%; padding:8px; margin-top:4px;" />
+        </p>
+        <div class="barra-acoes">
+          <button type="submit" class="botao" id="botaoEntrar">Entrar</button>
+          <button type="button" class="botao secundario" id="botaoCriarConta">Criar conta</button>
+        </div>
+      </form>
+      <p id="statusLogin"></p>
+    </section>
+  </main>
+
+  <script type="module" src="js/login.js"></script>
+</body>
+</html>
