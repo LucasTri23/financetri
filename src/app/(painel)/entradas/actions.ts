@@ -1,12 +1,13 @@
 "use server";
 
-import { and, eq, gte, lt } from "drizzle-orm";
+import { and, eq, gte, inArray, lt } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { entradas } from "@/db/schema";
+import { entradas, users } from "@/db/schema";
+import { buscarIdsDoPlano } from "@/lib/plano";
 import { mesAtual } from "@/lib/utils";
 
 export type EstadoEntrada = { erro?: string; sucesso?: true } | null;
@@ -31,7 +32,7 @@ export async function adicionarEntrada(
   }
 
   await db.insert(entradas).values({
-    usuarioId: userId,
+    usuarioId: recebedorId ?? userId,
     descricao,
     tipo,
     valor: String(valor),
@@ -44,17 +45,29 @@ export async function adicionarEntrada(
   });
 
   revalidatePath("/entradas");
+  revalidatePath("/dashboard");
   return { sucesso: true };
 }
 
 export async function buscarEntradasDoMes(userId: string) {
   const { inicio, fim } = mesAtual();
+  const memberIds = await buscarIdsDoPlano(userId);
 
   return db
-    .select()
+    .select({
+      id: entradas.id,
+      data: entradas.data,
+      descricao: entradas.descricao,
+      tipo: entradas.tipo,
+      valor: entradas.valor,
+      adicionadoPorId: entradas.usuarioId,
+      adicionadoPorEmail: users.email,
+      adicionadoPorNome: users.name,
+    })
     .from(entradas)
+    .leftJoin(users, eq(entradas.usuarioId, users.id))
     .where(
-      and(eq(entradas.usuarioId, userId), gte(entradas.data, inicio), lt(entradas.data, fim)),
+      and(inArray(entradas.usuarioId, memberIds), gte(entradas.data, inicio), lt(entradas.data, fim)),
     )
     .orderBy(entradas.data);
 }

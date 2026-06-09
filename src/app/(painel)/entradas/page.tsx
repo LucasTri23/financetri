@@ -75,13 +75,16 @@ export default async function PaginaEntradas() {
         {itens.length === 0 ? (
           <EstadoVazio>Nenhuma entrada cadastrada neste mês ainda.</EstadoVazio>
         ) : (
-          <TabelaTransacoes colunas={["Data", "Descrição", "Tipo", "Valor"]}>
+          <TabelaTransacoes colunas={["Data", "Descrição", "Tipo", "Por", "Valor"]}>
             {itens.map((item) => (
               <LinhaTabela key={item.id}>
                 <CelulaTabela className="text-cinza">{formatarData(item.data)}</CelulaTabela>
                 <CelulaTabela>{item.descricao}</CelulaTabela>
                 <CelulaTabela className="text-xs text-cinza">
                   {ROTULO_TIPO[item.tipo] ?? item.tipo}
+                </CelulaTabela>
+                <CelulaTabela className="text-xs text-cinza">
+                  {item.adicionadoPorId === userId ? "Você" : item.adicionadoPorEmail?.split("@")[0] ?? "—"}
                 </CelulaTabela>
                 <CelulaTabela className="font-semibold text-verde-texto">
                   {formatarMoeda(Number(item.valor))}

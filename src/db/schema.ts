@@ -134,6 +134,19 @@ export const dividas = pgTable("dividas", {
   criadoEm: timestamp("criado_em").defaultNow().notNull(),
 });
 
+// Eventos do calendário compartilhado. planoId nulo = evento pessoal.
+export const eventos = pgTable("eventos", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  criadorId: text("criador_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  planoId: uuid("plano_id").references(() => planos.id, { onDelete: "cascade" }),
+  titulo: text("titulo").notNull(),
+  descricao: text("descricao"),
+  data: date("data").notNull(),
+  criadoEm: timestamp("criado_em").defaultNow().notNull(),
+});
+
 // Entrada: receita avulsa ou recorrente. Espelha usuarios/{uid}/entradas.
 export const entradas = pgTable("entradas", {
   id: uuid("id").primaryKey().defaultRandom(),

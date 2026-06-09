@@ -1,12 +1,13 @@
 "use server";
 
-import { and, eq, gte, lt } from "drizzle-orm";
+import { and, eq, gte, inArray, lt } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { dividas, saidas } from "@/db/schema";
+import { dividas, saidas, users } from "@/db/schema";
+import { buscarIdsDoPlano } from "@/lib/plano";
 import { calcularProximoVencimento, mesAtual } from "@/lib/utils";
 
 export type EstadoSaida = { erro?: string; sucesso?: true } | null;
@@ -39,7 +40,7 @@ export async function adicionarSaida(
     const proximoVencimento = calcularProximoVencimento(data);
 
     await db.insert(dividas).values({
-      usuarioId: userId,
+      usuarioId: pagadorId ?? userId,
       descricao,
       categoria,
       valorParcela: String(valor),
@@ -54,7 +55,7 @@ export async function adicionarSaida(
     });
   } else {
     await db.insert(saidas).values({
-      usuarioId: userId,
+      usuarioId: pagadorId ?? userId,
       descricao,
       categoria,
       valor: String(valor),
@@ -69,30 +70,54 @@ export async function adicionarSaida(
   }
 
   revalidatePath("/saidas");
+  revalidatePath("/dashboard");
   return { sucesso: true };
 }
 
 export async function buscarGastosDoMes(userId: string) {
   const { inicio, fim } = mesAtual();
+  const memberIds = await buscarIdsDoPlano(userId);
 
   const [saidasMes, dividasMes] = await Promise.all([
     db
-      .select()
+      .select({
+        id: saidas.id,
+        data: saidas.data,
+        descricao: saidas.descricao,
+        categoria: saidas.categoria,
+        valor: saidas.valor,
+        adicionadoPorId: saidas.usuarioId,
+        adicionadoPorEmail: users.email,
+        adicionadoPorNome: users.name,
+      })
       .from(saidas)
-      .where(and(eq(saidas.usuarioId, userId), gte(saidas.data, inicio), lt(saidas.data, fim))),
+      .leftJoin(users, eq(saidas.usuarioId, users.id))
+      .where(and(inArray(saidas.usuarioId, memberIds), gte(saidas.data, inicio), lt(saidas.data, fim))),
     db
-      .select()
+      .select({
+        id: dividas.id,
+        proximoVencimento: dividas.proximoVencimento,
+        descricao: dividas.descricao,
+        categoria: dividas.categoria,
+        valorParcela: dividas.valorParcela,
+        parcelaAtual: dividas.parcelaAtual,
+        totalParcelas: dividas.totalParcelas,
+        adicionadoPorId: dividas.usuarioId,
+        adicionadoPorEmail: users.email,
+        adicionadoPorNome: users.name,
+      })
       .from(dividas)
+      .leftJoin(users, eq(dividas.usuarioId, users.id))
       .where(
         and(
-          eq(dividas.usuarioId, userId),
+          inArray(dividas.usuarioId, memberIds),
           gte(dividas.proximoVencimento, inicio),
           lt(dividas.proximoVencimento, fim),
         ),
       ),
   ]);
 
-  const itens = [
+  return [
     ...saidasMes.map((s) => ({
       id: s.id,
       data: s.data,
@@ -100,6 +125,8 @@ export async function buscarGastosDoMes(userId: string) {
       categoria: s.categoria,
       parcela: null as string | null,
       valor: Number(s.valor),
+      adicionadoPorId: s.adicionadoPorId,
+      adicionadoPor: s.adicionadoPorNome ?? s.adicionadoPorEmail ?? "—",
     })),
     ...dividasMes.map((d) => ({
       id: d.id,
@@ -108,8 +135,8 @@ export async function buscarGastosDoMes(userId: string) {
       categoria: d.categoria,
       parcela: `${Math.min(d.parcelaAtual + 1, d.totalParcelas)}/${d.totalParcelas}`,
       valor: Number(d.valorParcela),
+      adicionadoPorId: d.adicionadoPorId,
+      adicionadoPor: d.adicionadoPorNome ?? d.adicionadoPorEmail ?? "—",
     })),
   ].sort((a, b) => a.data.localeCompare(b.data));
-
-  return itens;
 }

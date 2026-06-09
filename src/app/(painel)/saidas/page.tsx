@@ -67,7 +67,7 @@ export default async function PaginaSaidas() {
         {itens.length === 0 ? (
           <EstadoVazio>Nenhuma saída cadastrada neste mês ainda.</EstadoVazio>
         ) : (
-          <TabelaTransacoes colunas={["Data", "Descrição", "Categoria", "Parcela", "Valor"]}>
+          <TabelaTransacoes colunas={["Data", "Descrição", "Categoria", "Parcela", "Por", "Valor"]}>
             {itens.map((item) => (
               <LinhaTabela key={item.id}>
                 <CelulaTabela className="text-cinza">{formatarData(item.data)}</CelulaTabela>
@@ -76,6 +76,9 @@ export default async function PaginaSaidas() {
                   {ROTULO_POR_CATEGORIA[item.categoria] ?? ROTULO_POR_CATEGORIA.outros}
                 </CelulaTabela>
                 <CelulaTabela className="text-cinza">{item.parcela ?? "—"}</CelulaTabela>
+                <CelulaTabela className="text-xs text-cinza">
+                  {item.adicionadoPorId === userId ? "Você" : item.adicionadoPor.split("@")[0]}
+                </CelulaTabela>
                 <CelulaTabela className="font-semibold text-vermelho-texto">
                   {formatarMoeda(item.valor)}
                 </CelulaTabela>

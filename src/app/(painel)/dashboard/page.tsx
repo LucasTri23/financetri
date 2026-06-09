@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { and, asc, eq, gte, lt, lte } from "drizzle-orm";
+import { and, asc, gte, inArray, lt, lte } from "drizzle-orm";
 import Link from "next/link";
 
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { dividas, entradas, saidas } from "@/db/schema";
+import { buscarIdsDoPlano } from "@/lib/plano";
 import { Atalho, CartaoCredito } from "@/components/ui/Cartao";
 import { EstadoVazio } from "@/components/ui/EstadoVazio";
 import { Indicador } from "@/components/ui/Indicador";
@@ -19,20 +20,21 @@ export const metadata: Metadata = {
 async function buscarDadosDashboard(userId: string) {
   const { inicio, fim, ano, mes } = mesAtual();
   const hoje = new Date().toISOString().slice(0, 10);
-  // próximos 30 dias
   const em30dias = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+  const memberIds = await buscarIdsDoPlano(userId);
 
   const [saidasMes, dividasMes, entradasMes, proximasDividas] = await Promise.all([
     db
       .select({ valor: saidas.valor })
       .from(saidas)
-      .where(and(eq(saidas.usuarioId, userId), gte(saidas.data, inicio), lt(saidas.data, fim))),
+      .where(and(inArray(saidas.usuarioId, memberIds), gte(saidas.data, inicio), lt(saidas.data, fim))),
     db
       .select({ valorParcela: dividas.valorParcela })
       .from(dividas)
       .where(
         and(
-          eq(dividas.usuarioId, userId),
+          inArray(dividas.usuarioId, memberIds),
           gte(dividas.proximoVencimento, inicio),
           lt(dividas.proximoVencimento, fim),
         ),
@@ -40,12 +42,12 @@ async function buscarDadosDashboard(userId: string) {
     db
       .select({ valor: entradas.valor })
       .from(entradas)
-      .where(and(eq(entradas.usuarioId, userId), gte(entradas.data, inicio), lt(entradas.data, fim))),
+      .where(and(inArray(entradas.usuarioId, memberIds), gte(entradas.data, inicio), lt(entradas.data, fim))),
     db
       .select()
       .from(dividas)
       .where(
-        and(eq(dividas.usuarioId, userId), gte(dividas.proximoVencimento, hoje), lte(dividas.proximoVencimento, em30dias)),
+        and(inArray(dividas.usuarioId, memberIds), gte(dividas.proximoVencimento, hoje), lte(dividas.proximoVencimento, em30dias)),
       )
       .orderBy(asc(dividas.proximoVencimento))
       .limit(10),
