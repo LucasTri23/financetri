@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -28,11 +29,11 @@ export function CartaoAuth({
     >
       <section className="w-full max-w-[408px] rounded-[22px] border border-white/60 bg-white/90 p-9 shadow-cartao backdrop-blur">
         <div className="mb-5 flex items-center gap-3">
-          <span className="flex h-[42px] w-[42px] items-center justify-center rounded-[13px] bg-gradient-to-br from-azul-claro to-azul-escuro font-extrabold text-white">
-            CF
+          <span className="flex h-[42px] w-[42px] shrink-0 items-center justify-center overflow-hidden rounded-[13px] bg-gradient-to-br from-azul-claro to-azul-escuro">
+            <Image src="/logo.png" alt="" width={42} height={42} className="h-full w-full object-cover" />
           </span>
           <span className="text-[1.08rem] font-extrabold tracking-tight text-azul-escuro">
-            Controle Financeiro
+            ControleFácil
           </span>
         </div>
 

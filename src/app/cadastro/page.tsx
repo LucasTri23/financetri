@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { CartaoAuth } from "@/components/auth/CartaoAuth";
@@ -9,7 +9,7 @@ import { entrarComGoogle } from "./actions";
 import { FormularioCadastro } from "./FormularioCadastro";
 
 export const metadata: Metadata = {
-  title: "Criar conta — Controle Financeiro",
+  title: "Criar conta — ControleFácil",
 };
 
 export default async function PaginaCadastro() {
@@ -19,7 +19,7 @@ export default async function PaginaCadastro() {
   return (
     <CartaoAuth
       titulo="Criar conta"
-      descricao="Preencha os dados abaixo para começar a usar o Controle Financeiro."
+      descricao="Preencha os dados abaixo para começar a usar o ControleFácil."
       rodapeTexto="Já tem conta?"
       rodapeLinkTexto="Entrar"
       rodapeLinkHref="/login"

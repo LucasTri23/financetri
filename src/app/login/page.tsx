@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { CartaoAuth } from "@/components/auth/CartaoAuth";
@@ -9,7 +9,7 @@ import { entrarComGoogle } from "./actions";
 import { FormularioLogin } from "./FormularioLogin";
 
 export const metadata: Metadata = {
-  title: "Entrar — Controle Financeiro",
+  title: "Entrar — ControleFácil",
 };
 
 export default async function PaginaLogin() {

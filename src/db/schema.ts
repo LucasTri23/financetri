@@ -144,6 +144,7 @@ export const eventos = pgTable("eventos", {
   titulo: text("titulo").notNull(),
   descricao: text("descricao"),
   data: date("data").notNull(),
+  etiqueta: text("etiqueta").notNull().default("pessoal"),
   criadoEm: timestamp("criado_em").defaultNow().notNull(),
 });
 

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
@@ -8,7 +8,7 @@ import { buscarPlano } from "./actions";
 import { BotaoCopiar, FormularioCriarPlano, FormularioEntrarComCodigo } from "./FormulariosPlano";
 
 export const metadata: Metadata = {
-  title: "Plano compartilhado — Controle Financeiro",
+  title: "Plano compartilhado — ControleFácil",
 };
 
 export default async function PaginaPlano() {

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* ── Tokens — Modo Claro ─────────────────────────────────────────────────── */
 :root {
   --color-azul-escuro: #0c4a6e;
   --color-azul: #0ea5e9;
@@ -18,12 +19,42 @@
   --color-cinza: #64748b;
   --color-cinza-claro: #94a3b8;
   --color-borda: #e2e8f0;
-  --color-fundo: #f3f7fb;
+  --color-fundo: #f0f6ff;
   --color-texto: #0f1d2b;
+  --color-cartao: #ffffff;
 
-  --shadow-cartao: 0 16px 40px -20px rgba(12, 74, 110, 0.32);
+  --shadow-cartao: 0 4px 24px -4px rgba(12, 74, 110, 0.12), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-cartao-hover: 0 8px 32px -4px rgba(12, 74, 110, 0.18), 0 2px 6px rgba(0,0,0,0.06);
 }
 
+/* ── Tokens — Modo Escuro ────────────────────────────────────────────────── */
+.dark {
+  --color-azul-escuro: #0ea5e9;
+  --color-azul: #38bdf8;
+  --color-azul-claro: #7dd3fc;
+  --color-azul-suave: #082035;
+  --color-azul-texto: #7dd3fc;
+
+  --color-verde: #4ade80;
+  --color-verde-suave: #052e16;
+  --color-verde-texto: #86efac;
+
+  --color-vermelho: #f87171;
+  --color-vermelho-suave: #2d0a0a;
+  --color-vermelho-texto: #fca5a5;
+
+  --color-cinza: #94a3b8;
+  --color-cinza-claro: #64748b;
+  --color-borda: #1e293b;
+  --color-fundo: #0b1120;
+  --color-texto: #e2e8f0;
+  --color-cartao: #111827;
+
+  --shadow-cartao: 0 4px 24px -4px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-cartao-hover: 0 8px 32px -4px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* ── Tema ────────────────────────────────────────────────────────────────── */
 @theme inline {
   --color-azul-escuro: var(--color-azul-escuro);
   --color-azul: var(--color-azul);
@@ -44,13 +75,54 @@
   --color-borda: var(--color-borda);
   --color-fundo: var(--color-fundo);
   --color-texto: var(--color-texto);
+  --color-cartao: var(--color-cartao);
 
   --shadow-cartao: var(--shadow-cartao);
+  --shadow-cartao-hover: var(--shadow-cartao-hover);
 
   --font-sans: var(--font-inter);
 }
 
+/* ── Base ────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
 body {
   background: var(--color-fundo);
   color: var(--color-texto);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Scrollbar moderna */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-borda); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-cinza-claro); }
+
+/* ── Dark mode: bg-white → bg-cartao ────────────────────────────────────── */
+.dark .bg-white {
+  background-color: var(--color-cartao);
+}
+.dark .bg-white\/90,
+.dark .bg-white\/85,
+.dark .bg-white\/80 {
+  background-color: color-mix(in srgb, var(--color-cartao) 95%, transparent);
+}
+.dark .text-white {
+  /* mantém branco em elementos intencionalmente brancos (sidebar, botões) */
+}
+
+/* Focus ring global */
+:focus-visible {
+  outline: 2px solid var(--color-azul);
+  outline-offset: 2px;
+}
+
+/* Transições suaves em elementos interativos */
+button, a, input, select, textarea {
+  transition-property: background-color, border-color, color, box-shadow, opacity, transform;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }

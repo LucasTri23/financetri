@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 import { BotaoEnviar } from "@/components/auth/BotaoEnviar";
 import { StatusFormulario } from "@/components/ui/StatusFormulario";
@@ -9,17 +10,28 @@ import { hojeISO } from "@/lib/utils";
 
 import { adicionarSaida, type EstadoSaida } from "./actions";
 
-export function FormularioSaida({ membrosDoPlanoPlan }: { membrosDoPlanoPlan: { id: string; email: string }[] }) {
+export function FormularioSaida({
+  membrosDoPlanoPlan,
+  redirecionarParaLista = false,
+}: {
+  membrosDoPlanoPlan: { id: string; email: string }[];
+  redirecionarParaLista?: boolean;
+}) {
   const [estado, acao] = useActionState<EstadoSaida, FormData>(adicionarSaida, null);
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (estado?.sucesso) {
-      formRef.current?.reset();
-      const campoData = formRef.current?.querySelector<HTMLInputElement>('[name="data"]');
-      if (campoData) campoData.value = hojeISO();
+      if (redirecionarParaLista) {
+        router.push("/saidas");
+      } else {
+        formRef.current?.reset();
+        const campoData = formRef.current?.querySelector<HTMLInputElement>('[name="data"]');
+        if (campoData) campoData.value = hojeISO();
+      }
     }
-  }, [estado]);
+  }, [estado, redirecionarParaLista, router]);
 
   const inputClass =
     "w-full rounded-xl border border-borda bg-white px-4 py-2.5 text-sm text-texto outline-none focus:border-azul focus:ring-2 focus:ring-azul-suave";

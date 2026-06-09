@@ -1,0 +1,1 @@
+ALTER TABLE "eventos" ADD COLUMN "etiqueta" text DEFAULT 'pessoal' NOT NULL;

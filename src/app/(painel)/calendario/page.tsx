@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -7,7 +7,7 @@ import { buscarDadosCalendario } from "./actions";
 import { Calendario } from "./Calendario";
 
 export const metadata: Metadata = {
-  title: "Calendário — Controle Financeiro",
+  title: "Calendário — ControleFácil",
 };
 
 const MESES_PT = [

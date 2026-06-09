@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -33,6 +34,10 @@ const SECOES: Secao[] = [
     titulo: "Plano",
     links: [{ chave: "plano", rotulo: "Plano compartilhado", icone: "👥", href: "/plano" }],
   },
+  {
+    titulo: "Sistema",
+    links: [{ chave: "configuracoes", rotulo: "Configurações", icone: "⚙️", href: "/configuracoes" }],
+  },
 ];
 
 function linkAtivo(pathname: string, href: string) {
@@ -42,10 +47,10 @@ function linkAtivo(pathname: string, href: string) {
 function Marca() {
   return (
     <div className="flex items-center gap-2.5 px-2 pb-7 text-[1.05rem] font-extrabold tracking-tight">
-      <span className="flex h-[34px] w-[34px] items-center justify-center rounded-[11px] bg-gradient-to-br from-azul-claro to-azul font-extrabold text-azul-escuro">
-        CF
+      <span className="flex h-[34px] w-[34px] shrink-0 items-center justify-center overflow-hidden rounded-[11px] bg-gradient-to-br from-azul-claro to-azul">
+        <Image src="/logo.png" alt="" width={34} height={34} className="h-full w-full object-cover" />
       </span>
-      <span>Controle Financeiro</span>
+      <span>ControleFácil</span>
     </div>
   );
 }
@@ -145,10 +150,10 @@ export function PainelShell({
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-borda bg-white px-4 py-3 md:hidden">
           <span className="flex items-center gap-2 text-[0.95rem] font-extrabold tracking-tight text-azul-escuro">
-            <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-gradient-to-br from-azul-claro to-azul text-xs text-azul-escuro">
-              CF
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-[10px] bg-gradient-to-br from-azul-claro to-azul">
+              <Image src="/logo.png" alt="" width={32} height={32} className="h-full w-full object-cover" />
             </span>
-            Controle Financeiro
+            ControleFácil
           </span>
           <button
             type="button"

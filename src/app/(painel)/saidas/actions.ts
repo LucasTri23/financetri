@@ -74,8 +74,10 @@ export async function adicionarSaida(
   return { sucesso: true };
 }
 
-export async function buscarGastosDoMes(userId: string) {
-  const { inicio, fim } = mesAtual();
+export async function buscarGastosDoMes(userId: string, inicioOpt?: string, fimOpt?: string) {
+  const { inicio: inicioMes, fim: fimMes } = mesAtual();
+  const inicio = inicioOpt ?? inicioMes;
+  const fim = fimOpt ?? fimMes;
   const memberIds = await buscarIdsDoPlano(userId);
 
   const [saidasMes, dividasMes] = await Promise.all([

@@ -8,6 +8,20 @@
       "when": 1780943719488,
       "tag": "0000_outgoing_sentinels",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781015444914,
+      "tag": "0001_hard_cloak",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781017270653,
+      "tag": "0002_lethal_reaper",
+      "breakpoints": true
     }
   ]
 }

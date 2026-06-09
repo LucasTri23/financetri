@@ -1,71 +1,86 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
+import Link from "next/link";
 
 import { auth } from "@/auth";
-import { db } from "@/db";
-import { planoMembros, users } from "@/db/schema";
 import { Cartao } from "@/components/ui/Cartao";
 import { EstadoVazio } from "@/components/ui/EstadoVazio";
 import { CelulaTabela, LinhaTabela, TabelaTransacoes } from "@/components/ui/TabelaTransacoes";
 import { ROTULO_POR_CATEGORIA } from "@/lib/categorias";
-import { formatarData, formatarMoeda, mesAtual } from "@/lib/utils";
+import { formatarData, formatarMoeda } from "@/lib/utils";
 
 import { buscarGastosDoMes } from "./actions";
-import { FormularioSaida } from "./FormularioSaida";
 
-export const metadata: Metadata = {
-  title: "Saídas — Controle Financeiro",
-};
+export const metadata: Metadata = { title: "Saídas — ControleFácil" };
 
-async function buscarMembrosDoPlano(userId: string, fallbackEmail: string) {
-  const membroRow = await db
-    .select({ planoId: planoMembros.planoId })
-    .from(planoMembros)
-    .where(eq(planoMembros.usuarioId, userId))
-    .limit(1);
+const MESES_PT = [
+  "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+  "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro",
+];
 
-  if (membroRow.length === 0) return [{ id: userId, email: fallbackEmail }];
-
-  const membros = await db
-    .select({ id: users.id, email: users.email })
-    .from(planoMembros)
-    .innerJoin(users, eq(planoMembros.usuarioId, users.id))
-    .where(eq(planoMembros.planoId, membroRow[0].planoId));
-
-  return membros.map((m) => ({ id: m.id, email: m.email! }));
+function calcularMes(mesParam?: string): { ano: number; mes: number; inicio: string; fim: string } {
+  const hoje = new Date();
+  let ano = hoje.getFullYear();
+  let mes = hoje.getMonth() + 1;
+  if (mesParam && /^\d{4}-\d{2}$/.test(mesParam)) {
+    const [a, m] = mesParam.split("-").map(Number);
+    if (m >= 1 && m <= 12) { ano = a; mes = m; }
+  }
+  const inicio = `${ano}-${String(mes).padStart(2, "0")}-01`;
+  const fim = mes === 12 ? `${ano + 1}-01-01` : `${ano}-${String(mes + 1).padStart(2, "0")}-01`;
+  return { ano, mes, inicio, fim };
 }
 
-export default async function PaginaSaidas() {
+export default async function PaginaSaidas({
+  searchParams,
+}: {
+  searchParams: Promise<{ mes?: string }>;
+}) {
   const sessao = await auth();
   if (!sessao?.user?.id) redirect("/login");
   const userId = sessao.user.id;
 
-  const { mes, ano } = mesAtual();
-  const nomeMes = new Date(ano, mes - 1, 1).toLocaleString("pt-BR", { month: "long" });
+  const { mes: mesParam } = await searchParams;
+  const { ano, mes, inicio, fim } = calcularMes(mesParam);
 
-  const [itens, membros] = await Promise.all([
-    buscarGastosDoMes(userId),
-    buscarMembrosDoPlano(userId, sessao.user.email!),
-  ]);
+  const mesAnteriorStr = mes === 1
+    ? `${ano - 1}-12`
+    : `${ano}-${String(mes - 1).padStart(2, "0")}`;
+  const mesSeguinteStr = mes === 12
+    ? `${ano + 1}-01`
+    : `${ano}-${String(mes + 1).padStart(2, "0")}`;
 
+  const itens = await buscarGastosDoMes(userId, inicio, fim);
   const totalMes = itens.reduce((acc, i) => acc + i.valor, 0);
 
   return (
     <>
-      <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight text-texto">Saídas</h1>
-          <p className="mt-1 text-sm text-cinza capitalize">
-            {nomeMes} de {ano} — {itens.length} lançamento{itens.length !== 1 ? "s" : ""}
+          <p className="mt-1 text-sm text-cinza">
+            {itens.length} lançamento{itens.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <span className="text-lg font-extrabold text-vermelho-texto">{formatarMoeda(totalMes)}</span>
+        <div className="flex items-center gap-3">
+          <Link href={`/saidas?mes=${mesAnteriorStr}`} className="rounded-xl border border-borda bg-cartao px-3 py-2 text-sm font-semibold text-texto hover:bg-azul-suave transition">←</Link>
+          <span className="min-w-[140px] text-center font-bold text-texto">{MESES_PT[mes - 1]} {ano}</span>
+          <Link href={`/saidas?mes=${mesSeguinteStr}`} className="rounded-xl border border-borda bg-cartao px-3 py-2 text-sm font-semibold text-texto hover:bg-azul-suave transition">→</Link>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-lg font-extrabold text-vermelho-texto">{formatarMoeda(totalMes)}</span>
+          <Link
+            href="/saidas/nova"
+            className="rounded-xl bg-gradient-to-r from-azul-claro to-azul-escuro px-4 py-2 text-sm font-bold text-white shadow hover:opacity-90 transition"
+          >
+            + Nova saída
+          </Link>
+        </div>
       </div>
 
-      <Cartao titulo="Lançamentos do mês">
+      <Cartao titulo="Lançamentos">
         {itens.length === 0 ? (
-          <EstadoVazio>Nenhuma saída cadastrada neste mês ainda.</EstadoVazio>
+          <EstadoVazio>Nenhuma saída cadastrada neste mês. <Link href="/saidas/nova" className="font-semibold text-azul-texto hover:underline">Adicionar →</Link></EstadoVazio>
         ) : (
           <TabelaTransacoes colunas={["Data", "Descrição", "Categoria", "Parcela", "Por", "Valor"]}>
             {itens.map((item) => (
@@ -86,10 +101,6 @@ export default async function PaginaSaidas() {
             ))}
           </TabelaTransacoes>
         )}
-      </Cartao>
-
-      <Cartao titulo="Adicionar saída" estreito>
-        <FormularioSaida membrosDoPlanoPlan={membros} />
       </Cartao>
     </>
   );

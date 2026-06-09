@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 
@@ -14,7 +14,7 @@ import { buscarEntradasDoMes } from "./actions";
 import { FormularioEntrada } from "./FormularioEntrada";
 
 export const metadata: Metadata = {
-  title: "Entradas — Controle Financeiro",
+  title: "Entradas — ControleFácil",
 };
 
 const ROTULO_TIPO: Record<string, string> = {

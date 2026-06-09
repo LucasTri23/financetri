@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 
 import { PaginaImportar } from "./PaginaImportar";
 
 export const metadata: Metadata = {
-  title: "Importar fatura — Controle Financeiro",
+  title: "Importar fatura — ControleFácil",
 };
 
 export default function ImportarPage() {

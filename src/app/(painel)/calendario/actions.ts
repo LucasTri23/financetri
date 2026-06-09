@@ -22,12 +22,13 @@ export async function adicionarEvento(
   const titulo = (formData.get("titulo") as string).trim();
   const descricao = (formData.get("descricao") as string | null)?.trim() || null;
   const data = formData.get("data") as string;
+  const etiqueta = (formData.get("etiqueta") as string) || "pessoal";
 
   if (!titulo || !data) return { erro: "Informe o título e a data." };
 
   const planoId = await buscarPlanoId(userId);
 
-  await db.insert(eventos).values({ criadorId: userId, planoId, titulo, descricao, data });
+  await db.insert(eventos).values({ criadorId: userId, planoId, titulo, descricao, data, etiqueta });
 
   revalidatePath("/calendario");
   return { sucesso: true };
@@ -56,6 +57,7 @@ export async function buscarDadosCalendario(userId: string, ano: number, mes: nu
             data: eventos.data,
             titulo: eventos.titulo,
             descricao: eventos.descricao,
+            etiqueta: eventos.etiqueta,
             criadorId: eventos.criadorId,
             criadorEmail: users.email,
             criadorNome: users.name,
@@ -69,6 +71,7 @@ export async function buscarDadosCalendario(userId: string, ano: number, mes: nu
             data: eventos.data,
             titulo: eventos.titulo,
             descricao: eventos.descricao,
+            etiqueta: eventos.etiqueta,
             criadorId: eventos.criadorId,
             criadorEmail: users.email,
             criadorNome: users.name,
