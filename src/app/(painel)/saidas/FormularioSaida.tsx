@@ -1,0 +1,118 @@
+"use client";
+
+import { useActionState, useEffect, useRef } from "react";
+
+import { BotaoEnviar } from "@/components/auth/BotaoEnviar";
+import { StatusFormulario } from "@/components/ui/StatusFormulario";
+import { CATEGORIAS } from "@/lib/categorias";
+import { hojeISO } from "@/lib/utils";
+
+import { adicionarSaida, type EstadoSaida } from "./actions";
+
+export function FormularioSaida({ membrosDoPlanoPlan }: { membrosDoPlanoPlan: { id: string; email: string }[] }) {
+  const [estado, acao] = useActionState<EstadoSaida, FormData>(adicionarSaida, null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (estado?.sucesso) {
+      formRef.current?.reset();
+      const campoData = formRef.current?.querySelector<HTMLInputElement>('[name="data"]');
+      if (campoData) campoData.value = hojeISO();
+    }
+  }, [estado]);
+
+  const inputClass =
+    "w-full rounded-xl border border-borda bg-white px-4 py-2.5 text-sm text-texto outline-none focus:border-azul focus:ring-2 focus:ring-azul-suave";
+  const labelClass = "text-sm font-medium text-texto";
+
+  return (
+    <form ref={formRef} action={acao} className="flex flex-col gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="descricao" className={labelClass}>Descrição</label>
+          <input type="text" id="descricao" name="descricao" required className={inputClass} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="valor" className={labelClass}>Valor (R$)</label>
+          <input type="number" id="valor" name="valor" required min="0.01" step="0.01" className={inputClass} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="data" className={labelClass}>Data</label>
+          <input type="date" id="data" name="data" required defaultValue={hojeISO()} className={inputClass} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="categoria" className={labelClass}>Categoria</label>
+          <select id="categoria" name="categoria" className={inputClass}>
+            {CATEGORIAS.map((c) => (
+              <option key={c.chave} value={c.chave}>{c.rotulo}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="metodo" className={labelClass}>Método de pagamento</label>
+          <select id="metodo" name="metodo" className={inputClass}>
+            <option value="">— Selecione —</option>
+            <option value="cartao_credito">Cartão de crédito</option>
+            <option value="cartao_debito">Cartão de débito</option>
+            <option value="pix">Pix</option>
+            <option value="dinheiro">Dinheiro</option>
+            <option value="boleto">Boleto</option>
+          </select>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="tipoLancamento" className={labelClass}>Tipo de lançamento</label>
+          <select id="tipoLancamento" name="tipoLancamento" className={inputClass}
+            onChange={(e) => {
+              const blocoP = document.getElementById("blocoParcelado");
+              const blocoR = document.getElementById("blocoRecorrente");
+              if (blocoP) blocoP.hidden = e.target.value !== "parcelado";
+              if (blocoR) blocoR.hidden = e.target.value !== "recorrente";
+            }}
+          >
+            <option value="unico">Único</option>
+            <option value="parcelado">Parcelado</option>
+            <option value="recorrente">Recorrente</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="blocoParcelado" hidden className="flex flex-col gap-1.5 border-l-4 border-azul-claro pl-4">
+        <label htmlFor="totalParcelas" className={labelClass}>Número de parcelas</label>
+        <input type="number" id="totalParcelas" name="totalParcelas" min="2" className={inputClass} />
+      </div>
+
+      <div id="blocoRecorrente" hidden className="flex flex-col gap-1.5 border-l-4 border-azul-claro pl-4">
+        <label htmlFor="frequencia" className={labelClass}>Frequência</label>
+        <select id="frequencia" name="frequencia" className={inputClass}>
+          <option value="mensal">Mensal</option>
+          <option value="semanal">Semanal</option>
+          <option value="anual">Anual</option>
+        </select>
+      </div>
+
+      {membrosDoPlanoPlan.length > 1 && (
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="pagadorId" className={labelClass}>Pago por</label>
+          <select id="pagadorId" name="pagadorId" className={inputClass}>
+            {membrosDoPlanoPlan.map((m) => (
+              <option key={m.id} value={m.id}>{m.email}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      <div className="flex items-center gap-4 pt-2">
+        <BotaoEnviar texto="Salvar saída" textoEnviando="Salvando…" />
+        <StatusFormulario variante={estado?.sucesso ? "sucesso" : estado?.erro ? "erro" : "neutro"}>
+          {estado?.sucesso ? "Saída salva com sucesso!" : estado?.erro}
+        </StatusFormulario>
+      </div>
+    </form>
+  );
+}
