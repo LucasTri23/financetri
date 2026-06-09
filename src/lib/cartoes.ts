@@ -37,6 +37,19 @@ export function formatarMesReferencia(mesRef: string): string {
   return `${nomes[mes - 1]}/${ano}`;
 }
 
+/** Retorna o intervalo de datas de uma fatura (início e fim inclusivos).
+ *  Ex: mesRef="2026-05", fechamento=15 → início=2026-04-16, fim=2026-05-15
+ */
+export function calcularPeriodoFatura(mesReferencia: string, diaFechamento: number): { inicio: string; fim: string } {
+  const [ano, mes] = mesReferencia.split("-").map(Number);
+  const fimDate = new Date(ano, mes - 1, diaFechamento);
+  const inicioDate = new Date(ano, mes - 2, diaFechamento + 1);
+  return {
+    inicio: inicioDate.toISOString().slice(0, 10),
+    fim: fimDate.toISOString().slice(0, 10),
+  };
+}
+
 export const BANDEIRAS = [
   { chave: "visa",       rotulo: "Visa" },
   { chave: "mastercard", rotulo: "Mastercard" },

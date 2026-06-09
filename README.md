@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ControleFácil
 
-## Getting Started
+Organize suas finanças pessoais e compartilhadas em um só lugar.
 
-First, run the development server:
+## O que é
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+O ControleFácil é um aplicativo para você acompanhar para onde vai o seu dinheiro todo mês. Registre gastos, receitas e parcelas, veja seu saldo em tempo real e, se quiser, divida o controle financeiro com outra pessoa.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Como funciona
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Dashboard
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ao entrar no app, você vê um resumo do mês atual: total de entradas, total de saídas, saldo e os próximos vencimentos de parcelas. Se você estiver em um plano compartilhado, também aparecem cards individuais de cada membro e o total consolidado do grupo.
 
-## Learn More
+### Saídas
 
-To learn more about Next.js, take a look at the following resources:
+Registre qualquer gasto: uma compra avulsa, uma conta recorrente (como aluguel ou streaming) ou uma compra parcelada. Você escolhe a categoria, o método de pagamento e, se for parcelado, quantas vezes. O app organiza tudo por mês e desconta do seu saldo automaticamente.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Entradas
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Cadastre suas receitas — salário, freelance, reembolso, investimentos, qualquer coisa. Assim como nas saídas, você pode marcar uma entrada como recorrente para ela aparecer todo mês sem precisar registrar de novo.
 
-## Deploy on Vercel
+### Cartões de crédito
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Cadastre seus cartões informando o dia de fechamento e o dia de vencimento. O app identifica automaticamente a qual fatura cada gasto pertence e mostra:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Fatura aberta** — o que já foi gasto no período atual do cartão.
+- **A pagar** — faturas fechadas que ainda não foram pagas, com destaque em vermelho para as atrasadas.
+- **Histórico** — todas as faturas anteriores e quando foram pagas.
+
+Quando você paga uma fatura, basta marcá-la como paga e ela vai para o histórico.
+
+### Importar fatura PDF
+
+Sem precisar digitar tudo manualmente: faça upload do extrato em PDF do seu cartão (Nubank ou Itaú) e o app lê as transações automaticamente. Você revisa a lista, ajusta o que quiser e confirma — tudo cai direto nos seus lançamentos.
+
+### Plano compartilhado
+
+Crie um plano e compartilhe o código com outra pessoa — um cônjuge, parceiro ou colega de república. Quem entrar no plano passa a ver as finanças unificadas no dashboard, com o resumo de cada membro e o total do grupo.
+
+### Calendário
+
+Visualize seus eventos e vencimentos em formato de calendário para não perder nenhuma data importante.
+
+### Análises
+
+Veja gráficos de gastos por categoria e por período para entender seus hábitos de consumo ao longo do tempo.
+
+### Configurações
+
+Personalize o app: adicione seu nome de exibição, uma foto de perfil e escolha entre o tema claro ou escuro.

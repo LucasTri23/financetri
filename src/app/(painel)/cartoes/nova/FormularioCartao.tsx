@@ -15,7 +15,9 @@ export function FormularioCartao() {
   const router = useRouter();
 
   useEffect(() => {
-    if (estado?.sucesso) router.push("/cartoes");
+    if (estado?.sucesso && estado.cartaoId) {
+      router.push(`/cartoes/${estado.cartaoId}?novo=1`);
+    }
   }, [estado, router]);
 
   const inputClass =

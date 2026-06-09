@@ -1,14 +1,15 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, gte, lte } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { cartoes, faturas } from "@/db/schema";
+import { cartoes, dividas, faturas, saidas } from "@/db/schema";
+import { calcularPeriodoFatura } from "@/lib/cartoes";
 
-export type EstadoCartao = { erro?: string; sucesso?: true } | null;
+export type EstadoCartao = { erro?: string; sucesso?: true; cartaoId?: string } | null;
 
 export async function criarCartao(
   _estadoAnterior: EstadoCartao,
@@ -29,17 +30,13 @@ export async function criarCartao(
   if (!diaVencimento || diaVencimento < 1 || diaVencimento > 28)
     return { erro: "Dia de vencimento inválido (1–28)." };
 
-  await db.insert(cartoes).values({
-    usuarioId: sessao.user.id,
-    nome,
-    bandeira,
-    diaFechamento,
-    diaVencimento,
-    cor,
-  });
+  const [novoCartao] = await db
+    .insert(cartoes)
+    .values({ usuarioId: sessao.user.id, nome, bandeira, diaFechamento, diaVencimento, cor })
+    .returning({ id: cartoes.id });
 
   revalidatePath("/cartoes");
-  return { sucesso: true };
+  return { sucesso: true, cartaoId: novoCartao.id };
 }
 
 export async function excluirCartao(id: string): Promise<void> {
@@ -51,6 +48,48 @@ export async function excluirCartao(id: string): Promise<void> {
     .where(and(eq(cartoes.id, id), eq(cartoes.usuarioId, sessao.user.id)));
 
   revalidatePath("/cartoes");
+}
+
+export async function excluirFatura(cartaoId: string, mesReferencia: string): Promise<void> {
+  const sessao = await auth();
+  if (!sessao?.user?.id) return;
+
+  const [cartao] = await db
+    .select({ diaFechamento: cartoes.diaFechamento })
+    .from(cartoes)
+    .where(and(eq(cartoes.id, cartaoId), eq(cartoes.usuarioId, sessao.user.id)));
+  if (!cartao) return;
+
+  const { inicio, fim } = calcularPeriodoFatura(mesReferencia, cartao.diaFechamento);
+
+  await Promise.all([
+    db.delete(saidas).where(and(eq(saidas.cartaoId, cartaoId), gte(saidas.data, inicio), lte(saidas.data, fim))),
+    db.delete(dividas).where(and(eq(dividas.cartaoId, cartaoId), gte(dividas.proximoVencimento, inicio), lte(dividas.proximoVencimento, fim))),
+    db.delete(faturas).where(and(eq(faturas.cartaoId, cartaoId), eq(faturas.mesReferencia, mesReferencia))),
+  ]);
+
+  revalidatePath(`/cartoes/${cartaoId}`);
+  revalidatePath("/cartoes");
+  revalidatePath("/saidas");
+  revalidatePath("/dashboard");
+}
+
+export async function excluirItemSaida(id: string): Promise<void> {
+  const sessao = await auth();
+  if (!sessao?.user?.id) return;
+  await db.delete(saidas).where(and(eq(saidas.id, id), eq(saidas.usuarioId, sessao.user.id)));
+  revalidatePath("/cartoes");
+  revalidatePath("/saidas");
+  revalidatePath("/dashboard");
+}
+
+export async function excluirItemDivida(id: string): Promise<void> {
+  const sessao = await auth();
+  if (!sessao?.user?.id) return;
+  await db.delete(dividas).where(and(eq(dividas.id, id), eq(dividas.usuarioId, sessao.user.id)));
+  revalidatePath("/cartoes");
+  revalidatePath("/saidas");
+  revalidatePath("/dashboard");
 }
 
 export type EstadoFatura = { erro?: string; sucesso?: true } | null;

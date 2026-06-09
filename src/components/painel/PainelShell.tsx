@@ -5,6 +5,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+function Avatar({ foto, nome, tamanho = 36 }: { foto: string | null; nome: string; tamanho?: number }) {
+  const inicial = nome.charAt(0).toUpperCase();
+  return foto ? (
+    <span className="relative overflow-hidden rounded-full shrink-0" style={{ width: tamanho, height: tamanho }}>
+      <Image src={foto} alt="Foto de perfil" fill sizes={`${tamanho}px`} className="object-cover" />
+    </span>
+  ) : (
+    <span
+      className="flex shrink-0 items-center justify-center rounded-full bg-white/20 font-bold text-white"
+      style={{ width: tamanho, height: tamanho, fontSize: tamanho * 0.42 }}
+    >
+      {inicial}
+    </span>
+  );
+}
+
 type Secao = {
   titulo: string | null;
   links: { chave: string; rotulo: string; icone: string; href: string }[];
@@ -18,7 +34,6 @@ const SECOES: Secao[] = [
   {
     titulo: "Lançamentos",
     links: [
-      { chave: "importar", rotulo: "Importar fatura", icone: "📄", href: "/importar" },
       { chave: "cartoes", rotulo: "Cartões", icone: "💳", href: "/cartoes" },
       { chave: "saidas", rotulo: "Saídas", icone: "↘", href: "/saidas" },
       { chave: "entradas", rotulo: "Entradas", icone: "↗", href: "/entradas" },
@@ -90,14 +105,19 @@ function Navegacao({ pathname, aoNavegar }: { pathname: string; aoNavegar?: () =
 
 function RodapeBarra({
   nomeUsuario,
+  fotoUsuario,
   acaoSair,
 }: {
   nomeUsuario: string;
+  fotoUsuario: string | null;
   acaoSair: () => Promise<void>;
 }) {
   return (
     <div className="flex flex-col gap-1 border-t border-white/12 pt-4">
-      <div className="truncate px-3.5 pb-1.5 text-[0.85rem] text-white/60">{nomeUsuario}</div>
+      <div className="flex items-center gap-2.5 px-3.5 pb-1.5">
+        <Avatar foto={fotoUsuario} nome={nomeUsuario} tamanho={32} />
+        <span className="truncate text-[0.83rem] text-white/70">{nomeUsuario}</span>
+      </div>
       <form action={acaoSair}>
         <button
           type="submit"
@@ -113,11 +133,13 @@ function RodapeBarra({
 function ConteudoBarra({
   pathname,
   nomeUsuario,
+  fotoUsuario,
   acaoSair,
   aoNavegar,
 }: {
   pathname: string;
   nomeUsuario: string;
+  fotoUsuario: string | null;
   acaoSair: () => Promise<void>;
   aoNavegar?: () => void;
 }) {
@@ -125,7 +147,7 @@ function ConteudoBarra({
     <div className="flex h-full flex-col">
       <Marca />
       <Navegacao pathname={pathname} aoNavegar={aoNavegar} />
-      <RodapeBarra nomeUsuario={nomeUsuario} acaoSair={acaoSair} />
+      <RodapeBarra nomeUsuario={nomeUsuario} fotoUsuario={fotoUsuario} acaoSair={acaoSair} />
     </div>
   );
 }
@@ -133,10 +155,12 @@ function ConteudoBarra({
 export function PainelShell({
   children,
   nomeUsuario,
+  fotoUsuario,
   acaoSair,
 }: {
   children: React.ReactNode;
   nomeUsuario: string;
+  fotoUsuario: string | null;
   acaoSair: () => Promise<void>;
 }) {
   const pathname = usePathname();
@@ -145,7 +169,7 @@ export function PainelShell({
   return (
     <div className="flex min-h-screen bg-fundo">
       <aside className="hidden w-[248px] shrink-0 flex-col bg-gradient-to-b from-azul-escuro to-[#082f49] p-[26px_18px] text-white md:flex">
-        <ConteudoBarra pathname={pathname} nomeUsuario={nomeUsuario} acaoSair={acaoSair} />
+        <ConteudoBarra pathname={pathname} nomeUsuario={nomeUsuario} fotoUsuario={fotoUsuario} acaoSair={acaoSair} />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -181,6 +205,7 @@ export function PainelShell({
             <ConteudoBarra
               pathname={pathname}
               nomeUsuario={nomeUsuario}
+              fotoUsuario={fotoUsuario}
               acaoSair={acaoSair}
               aoNavegar={() => setMenuAberto(false)}
             />

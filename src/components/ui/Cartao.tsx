@@ -1,5 +1,4 @@
 import type { ComponentProps, ReactNode } from "react";
-
 import { cn } from "@/lib/cn";
 
 export function Cartao({
@@ -16,12 +15,14 @@ export function Cartao({
   return (
     <section
       className={cn(
-        "mb-[22px] rounded-[18px] border border-borda bg-white px-7 py-6 shadow-cartao",
+        "mb-[22px] rounded-[20px] border border-borda bg-cartao px-7 py-6 shadow-cartao",
         estreito && "max-w-[620px]",
         className,
       )}
     >
-      {titulo && <h2 className="mb-3 text-[1.15rem] font-bold text-texto">{titulo}</h2>}
+      {titulo && (
+        <h2 className="mb-4 text-[1.1rem] font-bold text-texto">{titulo}</h2>
+      )}
       {children}
     </section>
   );
@@ -45,16 +46,25 @@ export function CartaoCredito({
   return (
     <div
       className={cn(
-        "flex min-h-[172px] flex-col justify-between rounded-[18px] bg-gradient-to-br from-azul-claro to-azul-escuro p-6 text-white shadow-cartao",
+        "relative overflow-hidden flex min-h-[172px] flex-col justify-between rounded-[22px] bg-gradient-to-br from-[#1d87c4] via-[#0369a1] to-[#0c4a6e] p-6 text-white shadow-cartao",
         className,
       )}
     >
-      <div className="flex items-start justify-between font-bold tracking-wide">
-        <span>{rotulo}</span>
-        {icone}
+      {/* Círculos decorativos */}
+      <span className="pointer-events-none absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/10" />
+      <span className="pointer-events-none absolute -bottom-14 right-6 h-36 w-36 rounded-full bg-white/[0.07]" />
+      <span className="pointer-events-none absolute top-1/2 -left-6 h-24 w-24 -translate-y-1/2 rounded-full bg-white/[0.05]" />
+
+      <div className="relative flex items-start justify-between">
+        <span className="text-[0.85rem] font-bold tracking-wide text-white/80">{rotulo}</span>
+        {icone && <span className="opacity-70">{icone}</span>}
       </div>
-      <div className="my-[18px] text-[1.3rem] font-extrabold tracking-wider">{numero}</div>
-      <div className="flex items-end justify-between text-[0.78rem] opacity-90">
+
+      <div className="relative">
+        <p className="text-[2rem] font-extrabold tracking-tight leading-none">{numero}</p>
+      </div>
+
+      <div className="relative flex items-end justify-between text-[0.77rem] text-white/70">
         <span>{legendaEsquerda}</span>
         {legendaDireita && <span>{legendaDireita}</span>}
       </div>
@@ -84,11 +94,11 @@ export function Atalho({
   return (
     <a
       href={href}
-      className="flex min-w-[200px] flex-1 items-center gap-3.5 rounded-2xl border border-borda bg-white px-5 py-[18px] text-texto shadow-cartao transition hover:-translate-y-0.5"
+      className="group flex min-w-[200px] flex-1 items-center gap-3.5 rounded-2xl border border-borda bg-cartao px-5 py-[18px] text-texto shadow-cartao transition hover:-translate-y-0.5 hover:shadow-cartao-hover"
     >
       <span
         className={cn(
-          "flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] text-[1.3rem]",
+          "flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] text-[1.3rem] transition group-hover:scale-110",
           coresIcone[variante],
         )}
       >

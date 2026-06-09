@@ -10,6 +10,24 @@ import { dividas, saidas, users } from "@/db/schema";
 import { buscarIdsDoPlano } from "@/lib/plano";
 import { calcularProximoVencimento, mesAtual } from "@/lib/utils";
 
+export async function excluirSaida(id: string): Promise<void> {
+  const sessao = await auth();
+  if (!sessao?.user?.id) return;
+  await db.delete(saidas).where(and(eq(saidas.id, id), eq(saidas.usuarioId, sessao.user.id)));
+  revalidatePath("/saidas");
+  revalidatePath("/dashboard");
+  revalidatePath("/cartoes");
+}
+
+export async function excluirDivida(id: string): Promise<void> {
+  const sessao = await auth();
+  if (!sessao?.user?.id) return;
+  await db.delete(dividas).where(and(eq(dividas.id, id), eq(dividas.usuarioId, sessao.user.id)));
+  revalidatePath("/saidas");
+  revalidatePath("/dashboard");
+  revalidatePath("/cartoes");
+}
+
 export type EstadoSaida = { erro?: string; sucesso?: true } | null;
 
 export async function adicionarSaida(
@@ -125,6 +143,7 @@ export async function buscarGastosDoMes(userId: string, inicioOpt?: string, fimO
   return [
     ...saidasMes.map((s) => ({
       id: s.id,
+      tipo: "saida" as const,
       data: s.data,
       descricao: s.descricao,
       categoria: s.categoria,
@@ -135,6 +154,7 @@ export async function buscarGastosDoMes(userId: string, inicioOpt?: string, fimO
     })),
     ...dividasMes.map((d) => ({
       id: d.id,
+      tipo: "divida" as const,
       data: d.proximoVencimento,
       descricao: d.descricao,
       categoria: d.categoria,
