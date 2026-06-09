@@ -39,12 +39,22 @@ export async function uploadFotoPerfil(formData: FormData): Promise<EstadoFoto> 
   if (!file.type.startsWith("image/")) return { erro: "Arquivo deve ser uma imagem (JPG, PNG, WebP)." };
   if (file.size > 5 * 1024 * 1024) return { erro: "Foto muito grande — máximo 5 MB." };
 
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return { erro: "Upload de foto não está configurado. Adicione BLOB_READ_WRITE_TOKEN ao .env.local." };
+  }
+
   const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
   const caminho = `avatars/${sessao.user.id}.${ext}`;
 
-  const blob = await put(caminho, file, { access: "public", addRandomSuffix: false });
+  let blob: { url: string };
+  try {
+    blob = await put(caminho, file, { access: "public", addRandomSuffix: false });
+  } catch {
+    return { erro: "Falha ao fazer upload da foto. Verifique a configuração do Vercel Blob." };
+  }
 
   await db.update(users).set({ image: blob.url }).where(eq(users.id, sessao.user.id));
+  revalidatePath("/", "layout");
   revalidatePath("/configuracoes");
   revalidatePath("/dashboard");
   return { sucesso: true, url: blob.url };

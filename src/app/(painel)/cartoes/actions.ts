@@ -48,6 +48,7 @@ export async function excluirCartao(id: string): Promise<void> {
     .where(and(eq(cartoes.id, id), eq(cartoes.usuarioId, sessao.user.id)));
 
   revalidatePath("/cartoes");
+  redirect("/cartoes");
 }
 
 export async function excluirFatura(cartaoId: string, mesReferencia: string): Promise<void> {

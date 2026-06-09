@@ -6,6 +6,7 @@ import { Cartao } from "@/components/ui/Cartao";
 
 import { buscarPlano } from "./actions";
 import { BotaoCopiar, FormularioCriarPlano, FormularioEntrarComCodigo } from "./FormulariosPlano";
+import { BotaoSairDoPlano } from "./BotaoSairDoPlano";
 
 export const metadata: Metadata = {
   title: "Plano compartilhado — ControleFácil",
@@ -39,25 +40,36 @@ export default async function PaginaPlano() {
             </div>
 
             <div className="flex flex-col gap-2">
-              {plano.membros.map((membro) => (
-                <div
-                  key={membro.id}
-                  className="flex items-center gap-3 rounded-xl border border-borda bg-fundo px-4 py-3"
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-azul-suave font-bold text-azul-texto">
-                    {membro.email.charAt(0).toUpperCase()}
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-texto">{membro.email}</p>
-                    {plano.donoId === membro.id && (
-                      <p className="text-xs text-cinza">Criou o plano</p>
-                    )}
+              {plano.membros.map((membro) => {
+                const nomeExibido = membro.nome ?? membro.email;
+                const inicial = nomeExibido.charAt(0).toUpperCase();
+                return (
+                  <div
+                    key={membro.id}
+                    className="flex items-center gap-3 rounded-xl border border-borda bg-fundo px-4 py-3"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-azul-suave font-bold text-azul-texto">
+                      {inicial}
+                    </span>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-texto">{nomeExibido}</p>
+                      <p className="text-xs text-cinza">{membro.email}</p>
+                      {plano.donoId === membro.id && (
+                        <p className="text-xs text-cinza">Criou o plano</p>
+                      )}
+                    </div>
                     {membro.id === userId && (
-                      <p className="text-xs text-azul-texto font-medium">Você</p>
+                      <span className="rounded-full bg-azul-suave px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-azul-texto">
+                        você
+                      </span>
                     )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
+            </div>
+
+            <div className="mt-5 border-t border-borda pt-4">
+              <BotaoSairDoPlano ehDono={plano.donoId === userId} />
             </div>
           </Cartao>
         </>

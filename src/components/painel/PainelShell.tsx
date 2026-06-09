@@ -29,7 +29,7 @@ type Secao = {
 const SECOES: Secao[] = [
   {
     titulo: null,
-    links: [{ chave: "painel", rotulo: "Painel", icone: "🏠", href: "/dashboard" }],
+    links: [{ chave: "painel", rotulo: "Página inicial", icone: "🏠", href: "/dashboard" }],
   },
   {
     titulo: "Lançamentos",

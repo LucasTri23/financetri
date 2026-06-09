@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { and, asc, gte, inArray, lt, lte, sql } from "drizzle-orm";
+import Image from "next/image";
 import Link from "next/link";
 
 import { auth } from "@/auth";
@@ -19,6 +20,7 @@ type CardMembro = {
   uid: string;
   email: string;
   nome: string | null;
+  foto: string | null;
   gastos: number;
   receitas: number;
   saldo: number;
@@ -70,7 +72,7 @@ async function buscarDadosDashboard(userId: string) {
       : Promise.resolve([]),
 
     emPlano
-      ? db.select({ id: users.id, email: users.email, nome: users.name })
+      ? db.select({ id: users.id, email: users.email, nome: users.name, foto: users.image })
           .from(users).where(inArray(users.id, memberIds))
       : Promise.resolve([]),
   ]);
@@ -88,7 +90,7 @@ async function buscarDadosDashboard(userId: string) {
           Number(saidasPorMembro.find((r) => r.uid === uid)?.total ?? 0) +
           Number(dividasPorMembro.find((r) => r.uid === uid)?.total ?? 0);
         const receitas = Number(entradasPorMembro.find((r) => r.uid === uid)?.total ?? 0);
-        return { uid, email: info?.email ?? uid, nome: info?.nome ?? null, gastos, receitas, saldo: receitas - gastos };
+        return { uid, email: info?.email ?? uid, nome: info?.nome ?? null, foto: info?.foto ?? null, gastos, receitas, saldo: receitas - gastos };
       })
     : [];
 
@@ -125,10 +127,8 @@ export default async function PaginaDashboard() {
           <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-cinza">Membros do plano</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(260px,1fr))]">
             {cardsMembers.map((membro, i) => {
-              const inicial = (membro.nome ?? membro.email).charAt(0).toUpperCase();
-              const nomeExibido = membro.uid === userId
-                ? "Você"
-                : (membro.nome ?? membro.email.split("@")[0]);
+              const nomeExibido = membro.nome ?? membro.email.split("@")[0];
+              const inicial = nomeExibido.charAt(0).toUpperCase();
 
               return (
                 <div
@@ -139,12 +139,20 @@ export default async function PaginaDashboard() {
                   <span className="pointer-events-none absolute -bottom-8 -right-2 h-20 w-20 rounded-full bg-white/[0.08]" />
 
                   <div className="relative mb-4 flex items-center gap-3">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/20 text-lg font-extrabold backdrop-blur-sm">
-                      {inicial}
-                    </span>
+                    {membro.foto ? (
+                      <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-white/30">
+                        <Image src={membro.foto} alt={nomeExibido} fill sizes="44px" className="object-cover" />
+                      </span>
+                    ) : (
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/20 text-lg font-extrabold backdrop-blur-sm">
+                        {inicial}
+                      </span>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-bold leading-5">{nomeExibido}</p>
-                      <p className="truncate text-xs text-white/70">{membro.email}</p>
+                      {membro.nome && (
+                        <p className="truncate text-xs text-white/60">{membro.email}</p>
+                      )}
                     </div>
                     {membro.uid === userId && (
                       <span className="shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">

@@ -14,6 +14,7 @@ import { CelulaTabela, LinhaTabela, TabelaTransacoes } from "@/components/ui/Tab
 
 import { BotaoPagarFatura } from "./BotaoPagarFatura";
 import { BotaoExcluirFatura } from "./BotaoExcluirFatura";
+import { BotaoExcluirCartao } from "./BotaoExcluirCartao";
 import { excluirItemDivida, excluirItemSaida } from "../actions";
 
 export const metadata: Metadata = { title: "Fatura — ControleFácil" };
@@ -152,7 +153,8 @@ export default async function PaginaCartaoDetalhe({
           <h1 className="text-2xl font-extrabold tracking-tight text-texto">{cartao.nome}</h1>
           <p className="text-sm text-cinza capitalize">{cartao.bandeira} • fecha dia {cartao.diaFechamento} • vence dia {cartao.diaVencimento}</p>
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-3">
+          <BotaoExcluirCartao cartaoId={cartao.id} nomeCartao={cartao.nome} />
           <Link
             href={`/importar?cartaoId=${cartao.id}`}
             className="rounded-xl bg-gradient-to-r from-azul-claro to-azul-escuro px-4 py-2 text-sm font-bold text-white shadow hover:opacity-90 transition"

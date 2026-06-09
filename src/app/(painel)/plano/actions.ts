@@ -99,10 +99,38 @@ export async function buscarPlano(userId: string) {
     .limit(1);
 
   const membros = await db
-    .select({ id: users.id, email: users.email })
+    .select({ id: users.id, email: users.email, nome: users.name })
     .from(planoMembros)
     .innerJoin(users, eq(planoMembros.usuarioId, users.id))
     .where(eq(planoMembros.planoId, planoId));
 
-  return { ...planoInfo, membros: membros.map((m) => ({ id: m.id, email: m.email! })) };
+  return { ...planoInfo, membros: membros.map((m) => ({ id: m.id, email: m.email!, nome: m.nome })) };
+}
+
+export async function sairDoPlano(): Promise<void> {
+  const sessao = await auth();
+  if (!sessao?.user?.id) redirect("/login");
+  const userId = sessao.user.id;
+
+  const [membroRow] = await db
+    .select({ planoId: planoMembros.planoId })
+    .from(planoMembros)
+    .where(eq(planoMembros.usuarioId, userId))
+    .limit(1);
+
+  if (!membroRow) redirect("/plano");
+
+  const [plano] = await db.select().from(planos).where(eq(planos.id, membroRow.planoId));
+
+  if (plano?.donoId === userId) {
+    await db.delete(planos).where(eq(planos.id, membroRow.planoId));
+  } else {
+    await db.delete(planoMembros).where(
+      and(eq(planoMembros.planoId, membroRow.planoId), eq(planoMembros.usuarioId, userId)),
+    );
+  }
+
+  revalidatePath("/plano");
+  revalidatePath("/dashboard");
+  redirect("/plano");
 }
