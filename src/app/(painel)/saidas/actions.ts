@@ -27,6 +27,7 @@ export async function adicionarSaida(
   const metodo = (formData.get("metodo") as string) || null;
   const tipoLancamento = formData.get("tipoLancamento") as string;
   const pagadorId = (formData.get("pagadorId") as string) || null;
+  const cartaoId = (formData.get("cartaoId") as string) || null;
 
   if (!descricao || !valor || isNaN(valor) || !data) {
     return { erro: "Preencha todos os campos obrigatórios." };
@@ -41,6 +42,7 @@ export async function adicionarSaida(
 
     await db.insert(dividas).values({
       usuarioId: pagadorId ?? userId,
+      cartaoId: metodo === "cartao_credito" ? cartaoId : null,
       descricao,
       categoria,
       valorParcela: String(valor),
@@ -56,6 +58,7 @@ export async function adicionarSaida(
   } else {
     await db.insert(saidas).values({
       usuarioId: pagadorId ?? userId,
+      cartaoId: metodo === "cartao_credito" ? cartaoId : null,
       descricao,
       categoria,
       valor: String(valor),

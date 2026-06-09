@@ -1,11 +1,11 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { eq } from "drizzle-orm";
 
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { planoMembros, users } from "@/db/schema";
+import { cartoes, planoMembros, users } from "@/db/schema";
 import { Cartao } from "@/components/ui/Cartao";
 
 import { FormularioSaida } from "../FormularioSaida";
@@ -23,7 +23,10 @@ export default async function PaginaNovaSaida() {
   const sessao = await auth();
   if (!sessao?.user?.id) redirect("/login");
 
-  const membros = await buscarMembros(sessao.user.id, sessao.user.email!);
+  const [membros, meusCartoes] = await Promise.all([
+    buscarMembros(sessao.user.id, sessao.user.email!),
+    db.select({ id: cartoes.id, nome: cartoes.nome }).from(cartoes).where(eq(cartoes.usuarioId, sessao.user.id)),
+  ]);
 
   return (
     <>
@@ -39,7 +42,11 @@ export default async function PaginaNovaSaida() {
 
       <div className="max-w-2xl">
         <Cartao titulo="Dados da saída">
-          <FormularioSaida membrosDoPlanoPlan={membros} redirecionarParaLista />
+          <FormularioSaida
+            membrosDoPlanoPlan={membros}
+            cartoesDisponiveis={meusCartoes}
+            redirecionarParaLista
+          />
         </Cartao>
       </div>
     </>

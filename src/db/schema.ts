@@ -7,6 +7,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
@@ -95,12 +96,35 @@ export const planoMembros = pgTable(
   (t) => [primaryKey({ columns: [t.planoId, t.usuarioId] })],
 );
 
+// Cartão de crédito do usuário — base para agrupamento de faturas.
+export const cartoes = pgTable("cartoes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  usuarioId: text("usuario_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  nome: text("nome").notNull(),
+  bandeira: text("bandeira").notNull().default("visa"),
+  diaFechamento: integer("dia_fechamento").notNull(),
+  diaVencimento: integer("dia_vencimento").notNull(),
+  cor: text("cor").notNull().default("#8b5cf6"),
+  criadoEm: timestamp("criado_em").defaultNow().notNull(),
+});
+
+// Registro de pagamento de fatura. Um por cartão × mês de referência.
+export const faturas = pgTable("faturas", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  cartaoId: uuid("cartao_id").notNull().references(() => cartoes.id, { onDelete: "cascade" }),
+  mesReferencia: text("mes_referencia").notNull(), // "YYYY-MM"
+  pago: boolean("pago").notNull().default(false),
+  dataPagamento: date("data_pagamento"),
+  criadoEm: timestamp("criado_em").defaultNow().notNull(),
+}, (t) => [unique().on(t.cartaoId, t.mesReferencia)]);
+
 // Saída: gasto avulso ou recorrente. Espelha usuarios/{uid}/saidas.
 export const saidas = pgTable("saidas", {
   id: uuid("id").primaryKey().defaultRandom(),
   usuarioId: text("usuario_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  cartaoId: uuid("cartao_id").references(() => cartoes.id, { onDelete: "set null" }),
   descricao: text("descricao").notNull(),
   categoria: text("categoria").notNull().default("outros"),
   valor: numeric("valor", { precision: 12, scale: 2 }).notNull(),
@@ -120,6 +144,7 @@ export const dividas = pgTable("dividas", {
   usuarioId: text("usuario_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  cartaoId: uuid("cartao_id").references(() => cartoes.id, { onDelete: "set null" }),
   descricao: text("descricao").notNull(),
   categoria: text("categoria").notNull().default("outros"),
   valorParcela: numeric("valor_parcela", { precision: 12, scale: 2 }).notNull(),

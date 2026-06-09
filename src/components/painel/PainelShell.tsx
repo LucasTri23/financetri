@@ -19,6 +19,7 @@ const SECOES: Secao[] = [
     titulo: "Lançamentos",
     links: [
       { chave: "importar", rotulo: "Importar fatura", icone: "📄", href: "/importar" },
+      { chave: "cartoes", rotulo: "Cartões", icone: "💳", href: "/cartoes" },
       { chave: "saidas", rotulo: "Saídas", icone: "↘", href: "/saidas" },
       { chave: "entradas", rotulo: "Entradas", icone: "↗", href: "/entradas" },
     ],
